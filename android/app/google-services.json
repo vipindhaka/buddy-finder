@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "503394137889",
+    "project_id": "studypartner-f5beb",
+    "storage_bucket": "studypartner-f5beb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:503394137889:android:e2fdccf4c59b0a0a2ff060",
+        "android_client_info": {
+          "package_name": "com.vipin.studypartner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "503394137889-fgvm5pko3d53spmpl2dcnvnhvrm32otf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vipin.studypartner",
+            "certificate_hash": "b4c76ed2668e7ee6cbcbcb1e12cf56cd5ed0e4ee"
+          }
+        },
+        {
+          "client_id": "503394137889-2c2r6nlbgefm8b8jentd84kmcnrhcjk4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNrIIjzHo_S-y_nv0sd5dn-f-M-YtOrdc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "503394137889-2c2r6nlbgefm8b8jentd84kmcnrhcjk4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
