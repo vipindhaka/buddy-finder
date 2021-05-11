@@ -33,11 +33,11 @@ class _AllRequestState extends State<AllRequest> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting)
             return Center(child: CircularProgressIndicator());
-          final List<DocumentSnapshot> data = snapshot.data.docs;
+          final List<DocumentSnapshot> datalist = snapshot.data.docs;
           return ListView.builder(
-            itemCount: data.length,
+            itemCount: datalist.length,
             itemBuilder: (context, index) {
-              return NearbyBuddy(data, index, userdata, 'requests');
+              return NearbyBuddy(datalist, index, userdata, 'requests');
             },
           );
         },

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
+import 'package:studypartner/models/profile.dart';
 import 'package:studypartner/pages/profilePage.dart';
 import 'package:studypartner/providers/firebaseMethods.dart';
 
@@ -34,10 +35,12 @@ class _NearbyBuddyState extends State<NearbyBuddy> {
     return Container(
       child: ListTile(
           onTap: () {
-            Navigator.of(context).pushNamed(ProfilePage.routeName, arguments: [
-              widget.buddies[widget.index],
-              widget.currentuserdata
-            ]);
+            Navigator.of(context).pushNamed(ProfilePage.routeName,
+                arguments: ProfilePerson(
+                  widget.buddies[widget.index],
+                  widget.currentuserdata,
+                  widget.check,
+                ));
           },
           leading: CircleAvatar(
             //radius: 50,

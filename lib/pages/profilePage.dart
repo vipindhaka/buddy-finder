@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:studypartner/models/profile.dart';
 
 import 'package:studypartner/models/user.dart';
 
@@ -15,14 +16,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  //double radius = 100;
-  //bool check = false;
-  // @override
-  // void initState() {
-  //   checkUser();
-  //   super.initState();
-  // }
-
   Future<String> checkUser(String buddyuid, String currentUseruid) async {
     final data = Provider.of<FirebaseMethods>(context, listen: false);
     final check = await data.checkWhetherAlreadyFriendOrRequestSent(
@@ -32,12 +25,13 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<DocumentSnapshot> data =
-        ModalRoute.of(context).settings.arguments as List<DocumentSnapshot>;
-    DocumentSnapshot currentuserData = data[1];
-    DocumentSnapshot buddyuserData = data[0];
+    final ProfilePerson data = ModalRoute.of(context).settings.arguments;
+    DocumentSnapshot currentuserData = data.userData;
+    DocumentSnapshot buddyuserData = data.buddyData;
+    String checkdata = data.check;
+    print(currentuserData.data().toString());
     final fbMethods = Provider.of<FirebaseMethods>(context, listen: false);
-    final size = MediaQuery.of(context).size;
+    //final size = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: header('Profile', context),
@@ -85,7 +79,11 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
 
               FutureBuilder(
-                future: checkUser(buddyuserData['uid'], currentuserData['uid']),
+                future: checkUser(
+                  buddyuserData[
+                      checkdata == 'requests' ? 'requestSender' : 'uid'],
+                  currentuserData['uid'],
+                ),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());

@@ -160,8 +160,9 @@ class FirebaseMethods with ChangeNotifier {
         .collection('myreq')
         .where('requestSender', isEqualTo: currentUseruid)
         .get();
+    //print(requestCheck.docs.length.toString());
     if (requestCheck.docs.isNotEmpty) check = 'Request Sent';
-    print(requestCheck.docs.toString());
+    // print(requestCheck.docs.toString());
     if (requestCheck.docs.isEmpty) {
       recievedRequest = await FirebaseFirestore.instance
           .collection('requests')
@@ -180,11 +181,17 @@ class FirebaseMethods with ChangeNotifier {
           .doc(currentUseruid)
           .collection('myfriends')
           .get();
-      friendCheck.docs.forEach((element) {
+      friendCheck.docs.firstWhere((element) {
         if (element.id == buddyuid) {
           check = 'friend';
         }
+        return element.id == buddyuid;
       });
+      // forEach((element) {
+      //   if (element.id == buddyuid) {
+      //     check = 'friend';
+      //   }
+      // });
 
       print(friendCheck.docs.length.toString());
       //if (friendCheck == true) check = 'friends';
