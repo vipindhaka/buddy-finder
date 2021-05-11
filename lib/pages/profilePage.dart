@@ -23,6 +23,8 @@ class _ProfilePageState extends State<ProfilePage> {
     return check;
   }
 
+  //Future<void>
+
   @override
   Widget build(BuildContext context) {
     final ProfilePerson data = ModalRoute.of(context).settings.arguments;
@@ -91,6 +93,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   print(snapshot.data);
                   String check = snapshot.data;
                   return Row(
+                    //mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       TextButton.icon(
@@ -125,9 +128,20 @@ class _ProfilePageState extends State<ProfilePage> {
                                       currentuserData, buddyuserData);
                                 }
                               : check == 'Request Sent'
-                                  ? null
-                                  : () async {}),
-                      if (check == 'friend')
+                                  ? () async {
+                                      //setState(() {});
+                                      await fbMethods.deleteRequest(
+                                          buddyuserData,
+                                          currentuserData,
+                                          checkdata);
+                                    }
+                                  : () async {
+                                      await fbMethods.confirmRequest(
+                                          buddyuserData,
+                                          currentuserData,
+                                          checkdata);
+                                    }),
+                      if (check == 'Friends')
                         TextButton.icon(
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all(
@@ -141,8 +155,13 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                             ),
                             onPressed: () {},
-                            icon: Icon(Icons.message),
-                            label: Text('Message'))
+                            icon: Icon(Icons.message, color: Colors.white),
+                            label: Text(
+                              'Message',
+                              textAlign: TextAlign.center,
+                              style:
+                                  TextStyle(fontSize: 15, color: Colors.white),
+                            ))
                     ],
                   );
                 },

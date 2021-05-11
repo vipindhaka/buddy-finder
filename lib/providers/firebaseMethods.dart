@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -97,7 +98,8 @@ class FirebaseMethods with ChangeNotifier {
         .collection('requests')
         .doc(requestReciever['uid'])
         .collection('myreq')
-        .add({
+        .doc(requestsender['uid'])
+        .set({
       'requestSender': requestsender['uid'],
       'requestReciever': requestReciever['uid'],
       'name': requestsender['name'],
@@ -105,6 +107,52 @@ class FirebaseMethods with ChangeNotifier {
       'timestamp': DateTime.now(),
       'interests': requestsender['interests']
     });
+  }
+
+  Future<void> deleteRequest(DocumentSnapshot requestSender,
+      DocumentSnapshot requestReciever, String check) async {
+    print('deleting');
+    await FirebaseFirestore.instance
+        .collection('requests')
+        .doc(requestReciever['uid'])
+        .collection('myreq')
+        .doc(requestSender[check == 'requests' ? 'requestSender' : 'uid'])
+        .delete();
+  }
+
+  Future<void> confirmRequest(DocumentSnapshot requestSender,
+      DocumentSnapshot requestReciever, String check) async {
+    await FirebaseFirestore.instance
+        .collection('friends')
+        .doc(requestReciever['uid'])
+        .collection('myfriends')
+        .add({
+      'name': requestSender['name'],
+      'profile_photo': requestSender['profile_photo'],
+      'interests': requestSender['interests'],
+      'timestamp': DateTime.now(),
+      'friendUid': requestSender[check == 'requests' ? 'requestSender' : 'uid'],
+      'myUid': requestReciever['uid'],
+    });
+    await FirebaseFirestore.instance
+        .collection('friends')
+        .doc(requestSender[check == 'requests' ? 'requestSender' : 'uid'])
+        .collection('myfriends')
+        .add({
+      'name': requestReciever['name'],
+      'profile_photo': requestReciever['profile_photo'],
+      'interests': requestReciever['interests'],
+      'timestamp': DateTime.now(),
+      'friendUid': requestReciever['uid'],
+      'myUid': requestSender[check == 'requests' ? 'requestSender' : 'uid'],
+    });
+    // await FirebaseFirestore.instance
+    //     .collection('requests')
+    //     .doc(requestReciever['uid'])
+    //     .collection('myreq')
+    //     .doc(requestSender[check == 'requests' ? 'requestSender' : 'uid'])
+    //     .delete();
+    await deleteRequest(requestSender, requestReciever, check);
   }
 
   Future<QuerySnapshot> getLatestRequest(String uid) async {
@@ -181,17 +229,19 @@ class FirebaseMethods with ChangeNotifier {
           .doc(currentUseruid)
           .collection('myfriends')
           .get();
-      friendCheck.docs.firstWhere((element) {
-        if (element.id == buddyuid) {
-          check = 'friend';
+      print('here');
+      friendCheck.docs.
+          // firstWhere((element) {
+          //   if (element.id == buddyuid) {
+          //     check = 'friend';
+          //   }
+          //   return element.id == buddyuid;
+          // });
+          forEach((element) {
+        if (element['friendUid'] == buddyuid) {
+          check = 'Friends';
         }
-        return element.id == buddyuid;
       });
-      // forEach((element) {
-      //   if (element.id == buddyuid) {
-      //     check = 'friend';
-      //   }
-      // });
 
       print(friendCheck.docs.length.toString());
       //if (friendCheck == true) check = 'friends';
