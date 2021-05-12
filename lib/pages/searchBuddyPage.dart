@@ -151,8 +151,8 @@ class _SearchBuddyPageState extends State<SearchBuddyPage> {
     final fbData = Provider.of<FirebaseMethods>(context, listen: false);
     //final currentUser = fbData.getCurrentUser();
     return Scaffold(
-        drawer: AppDrawer(),
-        appBar: header('Search Buddy', context),
+        //drawer: AppDrawer(),
+        //appBar: header('Search Buddy', context),
         body: !_isLoading
             ? buildSearchScreen(size, locData)
             : buildNearBuddy(fbData)

@@ -26,8 +26,8 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: AppDrawer(),
-      appBar: header('Chats', context),
+      //drawer: AppDrawer(),
+      //appBar: header('Chats', context),
       body: FutureBuilder(
         future: setData(),
         builder: (ctx, dataSnapshot) {
@@ -68,6 +68,7 @@ class _ChatPageState extends State<ChatPage> {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               Divider(),
+              // StreamBuilder(),
             ],
           );
         },

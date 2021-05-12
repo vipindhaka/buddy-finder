@@ -107,6 +107,7 @@ class FirebaseMethods with ChangeNotifier {
       'timestamp': DateTime.now(),
       'interests': requestsender['interests']
     });
+    notifyListeners();
   }
 
   Future<void> deleteRequest(DocumentSnapshot requestSender,
@@ -118,6 +119,7 @@ class FirebaseMethods with ChangeNotifier {
         .collection('myreq')
         .doc(requestSender[check == 'requests' ? 'requestSender' : 'uid'])
         .delete();
+    notifyListeners();
   }
 
   Future<void> confirmRequest(DocumentSnapshot requestSender,
@@ -153,6 +155,7 @@ class FirebaseMethods with ChangeNotifier {
     //     .doc(requestSender[check == 'requests' ? 'requestSender' : 'uid'])
     //     .delete();
     await deleteRequest(requestSender, requestReciever, check);
+    notifyListeners();
   }
 
   Future<QuerySnapshot> getLatestRequest(String uid) async {

@@ -12,8 +12,8 @@ class ExamPage extends StatefulWidget {
 }
 
 class _ExamPageState extends State<ExamPage> {
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  double _radius;
+  // Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  // double _radius;
   //final tabController=TabController(length: length, vsync: vsync)
   @override
   Widget build(BuildContext context) {
@@ -21,20 +21,20 @@ class _ExamPageState extends State<ExamPage> {
     final data = Provider.of<FirebaseMethods>(context, listen: false);
     return Scaffold(
         //drawer: AppDrawer(),
-        appBar: header(
-          'Collab Dev',
-          context,
-          url: data.getCurrentUser().photoURL,
-        ),
+        // appBar: header(
+        //   'Collab Dev',
+        //   context,
+        //   url: data.getCurrentUser().photoURL,
+        // ),
         body: FutureBuilder(
-          future: data.getUserData(data.getCurrentUser().uid),
-          builder: (ctx, userSnapshot) {
-            if (userSnapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            }
-            print(userSnapshot.data.toString());
-            return Text('');
-          },
-        ));
+      future: data.getUserData(data.getCurrentUser().uid),
+      builder: (ctx, userSnapshot) {
+        if (userSnapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+        print(userSnapshot.data.toString());
+        return Text('');
+      },
+    ));
   }
 }

@@ -1,9 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:studypartner/providers/firebaseMethods.dart';
 
 class AppDrawer extends StatelessWidget {
+  final DocumentSnapshot userData;
+  AppDrawer(this.userData);
   // final url;
   // AppDrawer(this.url);
   @override
@@ -19,8 +22,8 @@ class AppDrawer extends StatelessWidget {
               margin: EdgeInsets.only(left: 10),
               child: CircleAvatar(
                 radius: 40,
-                backgroundImage: CachedNetworkImageProvider(
-                    fbMethods.getCurrentUser().photoURL),
+                backgroundImage:
+                    CachedNetworkImageProvider(userData['profile_photo']),
               ),
             ),
             Divider(),

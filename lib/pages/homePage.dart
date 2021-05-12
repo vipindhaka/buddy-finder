@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,20 +16,30 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool newUser = true;
+  //bool newUser = true;
+  DocumentSnapshot userData;
+  Future<bool> setupData() async {
+    final fbMethods = Provider.of<FirebaseMethods>(context, listen: false);
+    final newUser = await fbMethods.authenticateUser(
+      fbMethods.getCurrentUser(),
+    );
+    if (!newUser) {
+      userData = await fbMethods.getUserData(fbMethods.getCurrentUser().uid);
+    }
+    return newUser;
+  }
 
   @override
   Widget build(BuildContext context) {
     final data = Provider.of<FirebaseMethods>(context, listen: false);
     return FutureBuilder(
-      future: data.authenticateUser(
-        data.getCurrentUser(),
-      ),
+      future: setupData(),
       builder: (context, snapshot) {
         if (!snapshot.hasData)
           return Center(child: CircularProgressIndicator());
 
-        final displaywidget = snapshot.data ? AddInterests() : PageViewpage();
+        final displaywidget =
+            snapshot.data ? AddInterests() : PageViewpage(userData);
         return displaywidget;
       },
 

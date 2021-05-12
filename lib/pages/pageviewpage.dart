@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:studypartner/pages/ExamPage.dart';
@@ -7,25 +8,36 @@ import 'package:studypartner/pages/profilePage.dart';
 import 'package:studypartner/pages/searchBuddyPage.dart';
 import 'package:studypartner/providers/firebaseMethods.dart';
 import 'package:studypartner/widgets/appDrawer.dart';
+import 'package:studypartner/widgets/header.dart';
 
 class PageViewpage extends StatefulWidget {
+  final DocumentSnapshot user;
+  PageViewpage(this.user);
   @override
   _PageViewpageState createState() => _PageViewpageState();
 }
 
 class _PageViewpageState extends State<PageViewpage> {
   PageController _pageController;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _page = 0;
-  DocumentSnapshot user;
+  //DocumentSnapshot user;
 
   @override
   void initState() {
     // TODO: implement initState
-    //
+    //setUserData();
     super.initState();
     _pageController = PageController();
     //checkUser();
   }
+
+  // Future<void> setUserData() async {
+  //   final FirebaseMethods fbMethods =
+  //       Provider.of<FirebaseMethods>(context, listen: false);
+  //   final User userdata = fbMethods.getCurrentUser();
+  //   user = await fbMethods.getUserData(userdata.uid);
+  // }
 
   @override
   void dispose() {
@@ -36,10 +48,13 @@ class _PageViewpageState extends State<PageViewpage> {
 
   @override
   Widget build(BuildContext context) {
+    //print(user.data().toString());
     final data = Provider.of<FirebaseMethods>(context, listen: false);
     final userId = data.getCurrentUser().uid;
     return Scaffold(
-      drawer: AppDrawer(),
+      key: _scaffoldKey,
+      appBar: header(_page, context, widget.user, _scaffoldKey),
+      drawer: AppDrawer(widget.user),
       body: PageView(
         //pageSnapping: false,
         children: [

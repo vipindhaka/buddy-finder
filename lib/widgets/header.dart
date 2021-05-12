@@ -1,29 +1,32 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:studypartner/widgets/appDrawer.dart';
 
-header(String title, BuildContext context, {String url}) {
+header(int page, BuildContext context, DocumentSnapshot user,
+    GlobalKey<ScaffoldState> scaffoldkey) {
   return AppBar(
-    toolbarHeight: kToolbarHeight,
-    leading: url != null
-        ? Container(
-            margin: EdgeInsets.all(8),
-            child: GestureDetector(
-              child: CircleAvatar(
-                //radius: 50,
-                backgroundImage: CachedNetworkImageProvider(url),
-              ),
-              onTap: () => Scaffold.of(context).openDrawer(),
-            ),
-          )
-        : Text(''),
+    backgroundColor: Colors.transparent,
+    elevation: 0,
+    //automaticallyImplyLeading: false,
+    //toolbarHeight: kToolbarHeight,
     title: Text(
-      title,
-      style: TextStyle(fontSize: 30, letterSpacing: 2),
+      page == 0
+          ? 'Collab Dev'
+          : page == 1
+              ? 'Search buddy'
+              : 'Activity',
+      style: TextStyle(color: Theme.of(context).primaryColor),
     ),
     centerTitle: true,
-    elevation: 10,
-
-    //bottom: TabBar(tabs: [TextField()]),
+    leading: InkWell(
+      onTap: () => scaffoldkey.currentState.openDrawer(),
+      child: Container(
+        margin: EdgeInsets.only(left: 10),
+        child: CircleAvatar(
+          backgroundImage: CachedNetworkImageProvider(user['profile_photo']),
+        ),
+      ),
+    ),
   );
 }

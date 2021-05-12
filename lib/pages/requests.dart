@@ -27,7 +27,7 @@ class _AllRequestState extends State<AllRequest> {
     final data = Provider.of<FirebaseMethods>(context, listen: false);
     //final user = data.getCurrentUser();
     return Scaffold(
-      appBar: header('Requests', context),
+      // appBar: header('Requests', context),
       body: FutureBuilder(
         future: setUpData(),
         builder: (context, snapshot) {

@@ -9,8 +9,8 @@ class _UserSettingsState extends State<UserSettings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: header('Settins', context),
-      //body: ,
-    );
+        // appBar: header('Settins', context),
+        //body: ,
+        );
   }
 }
