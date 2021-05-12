@@ -11,34 +11,34 @@
 // }
 
 // class _EditProfileState extends State<EditProfile> {
-//   final displayName = TextEditingController();
-//   final interests = TextEditingController();
+// final displayName = TextEditingController();
+// final interests = TextEditingController();
 
-//   buildDisplayNameField(
-//     String title,
-//     String value,
-//   ) {
-//     return Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         Padding(
-//           padding: EdgeInsets.only(
-//             top: 12,
-//           ),
-//           child: Text(
-//             title,
-//             style: TextStyle(
-//               color: Colors.grey,
-//             ),
+// buildDisplayNameField(
+//   String title,
+//   String value,
+// ) {
+//   return Column(
+//     crossAxisAlignment: CrossAxisAlignment.start,
+//     children: [
+//       Padding(
+//         padding: EdgeInsets.only(
+//           top: 12,
+//         ),
+//         child: Text(
+//           title,
+//           style: TextStyle(
+//             color: Colors.grey,
 //           ),
 //         ),
-//         TextField(
-//           controller: title == 'interests' ? interests : displayName,
-//           decoration: InputDecoration(hintText: value),
-//         ),
-//       ],
-//     );
-//   }
+//       ),
+//       TextField(
+//         controller: title == 'interests' ? interests : displayName,
+//         decoration: InputDecoration(hintText: value),
+//       ),
+//     ],
+//   );
+// }
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -92,15 +92,15 @@
 //                         ),
 //                       ),
 //                     ),
-//                     Padding(
-//                       padding: EdgeInsets.all(16),
-//                       child: Column(
-//                         children: [
-//                           buildDisplayNameField(
-//                               'Display Name', 'Update Display Name'),
-//                           buildDisplayNameField('interests', 'Add Interests'),
-//                         ],
-//                       ),
+// Padding(
+//   padding: EdgeInsets.all(16),
+//   child: Column(
+//     children: [
+//       buildDisplayNameField(
+//           'Display Name', 'Update Display Name'),
+//       buildDisplayNameField('interests', 'Add Interests'),
+//     ],
+//   ),
 //                     ),
 //                     Consumer<FirebaseMethods>(
 //                       builder: (context, fbMeth, child) {

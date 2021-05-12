@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +10,7 @@ import 'package:studypartner/pages/getStartedPage.dart';
 import 'package:studypartner/pages/homePage.dart';
 import 'package:studypartner/pages/profilePage.dart';
 import 'package:studypartner/pages/requests.dart';
+import 'package:studypartner/pages/settings.dart';
 import 'package:studypartner/providers/firebaseMethods.dart';
 import 'package:studypartner/providers/locationMethods.dart';
 
@@ -17,7 +19,7 @@ void main() async {
   await Firebase.initializeApp();
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   sharedPreferences.getDouble('radius') ??
-      await sharedPreferences.setDouble('radius', 6.0);
+      await sharedPreferences.setDouble('radius', 10.0);
   runApp(MyApp(sharedPreferences));
 }
 
@@ -51,6 +53,7 @@ class MyApp extends StatelessWidget {
           AddInterests.routeName: (ctx) => AddInterests(),
           HomePage.routeName: (ctx) => HomePage(),
           ProfilePage.routeName: (ctx) => ProfilePage(),
+          UserSettings.routeName: (ctx) => UserSettings(),
         },
       ),
     );

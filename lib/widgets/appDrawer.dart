@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:studypartner/pages/settings.dart';
 import 'package:studypartner/providers/firebaseMethods.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -15,15 +16,28 @@ class AppDrawer extends StatelessWidget {
     return Drawer(
       child: SafeArea(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               //padding: EdgeInsets.only(left: 10),
               margin: EdgeInsets.only(left: 10),
-              child: CircleAvatar(
-                radius: 40,
-                backgroundImage:
-                    CachedNetworkImageProvider(userData['profile_photo']),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  CircleAvatar(
+                    radius: 40,
+                    backgroundImage:
+                        CachedNetworkImageProvider(userData['profile_photo']),
+                  ),
+                  Text(
+                    userData['name'],
+                    style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
+                  )
+                ],
               ),
             ),
             Divider(),
@@ -32,7 +46,10 @@ class AppDrawer extends StatelessWidget {
                     padding:
                         MaterialStateProperty.all(EdgeInsets.only(left: 10))),
                 icon: Icon(Icons.settings),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context)
+                      .pushNamed(UserSettings.routeName, arguments: userData);
+                },
                 label: Text(
                   'Settings',
                   style: TextStyle(fontSize: 20),
