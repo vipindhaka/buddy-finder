@@ -1,15 +1,20 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 import 'package:studypartner/models/user.dart';
+import 'package:studypartner/providers/locationMethods.dart';
 
 class FirebaseMethods with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   GoogleSignIn _googleSignIn = GoogleSignIn();
   DocumentSnapshot currentUser;
+  bool updatingProfile = false;
 
   Future<User> signIn() async {
     GoogleSignInAccount _signInAccount = await _googleSignIn.signIn();
@@ -48,6 +53,51 @@ class FirebaseMethods with ChangeNotifier {
     final List<DocumentSnapshot> docs = result.docs;
 
     return docs.length == 0 ? true : false;
+  }
+
+  Future<void> updateUserData(
+    DocumentSnapshot userData,
+    double prefradius,
+    double newradius,
+    String interests,
+    String displayName,
+    File image,
+    LocationMethods locationMethods,
+  ) async {
+    String downloadUrl;
+    updatingProfile = true;
+    notifyListeners();
+    if (image != null) {
+      final uploadTask =
+          FirebaseStorage.instance.ref().child('${userData['uid']}.jpg');
+      await uploadTask.putFile(image);
+      downloadUrl = await uploadTask.getDownloadURL();
+    }
+    Map<String, dynamic> updateData = {};
+    List<MapEntry<String, dynamic>> entries = [];
+    if (userData['name'] != displayName)
+      entries.add(MapEntry('name', displayName));
+
+    List<String> inte = interests.split(" ");
+
+    if (userData['interests'] != inte) entries.add(MapEntry('interests', inte));
+
+    if (downloadUrl != null)
+      entries.add(MapEntry('profile_photo', downloadUrl));
+
+    // if (userData['name'] != displayName)
+    //   entries.add(MapEntry('name', displayName));
+
+    updateData.addEntries(entries);
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userData['uid'])
+        .update(updateData);
+
+    if (prefradius != newradius) locationMethods.setRadius(newradius);
+    updatingProfile = false;
+    notifyListeners();
   }
 
   Future<void> addDataToDb(User currentUser, List<String> interests) async {

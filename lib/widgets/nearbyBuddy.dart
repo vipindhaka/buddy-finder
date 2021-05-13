@@ -48,8 +48,8 @@ class _NearbyBuddyState extends State<NearbyBuddy> {
                 widget.buddies[widget.index]['profile_photo']),
           ),
           title: Text(widget.buddies[widget.index]['name']),
-          subtitle: Text(widget.buddies[widget.index]['interests']
-              .toString()), //Text(km.toStringAsFixed(2).toString() + ' km away'),
+          subtitle: Text(widget.buddies[widget.index]['interests'].join(
+              " ")), //Text(km.toStringAsFixed(2).toString() + ' km away'),
           trailing: widget.check == 'search'
               ? Text(km.toStringAsFixed(2).toString() + ' km away')
               : Text('')),

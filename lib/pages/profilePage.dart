@@ -63,7 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 height: 15,
               ),
               Text(
-                buddyuserData['interests'].toString() ?? '',
+                buddyuserData['interests'].join(" ") ?? '',
                 style: TextStyle(fontSize: 20),
               ),
               // Text(
