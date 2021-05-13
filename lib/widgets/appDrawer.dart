@@ -17,7 +17,7 @@ class AppDrawer extends StatelessWidget {
       child: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
               //padding: EdgeInsets.only(left: 10),
@@ -54,6 +54,7 @@ class AppDrawer extends StatelessWidget {
                   'Settings',
                   style: TextStyle(fontSize: 20),
                 )),
+            Divider(),
             TextButton.icon(
               style: ButtonStyle(
                   padding:

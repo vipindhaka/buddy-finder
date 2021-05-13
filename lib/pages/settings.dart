@@ -164,6 +164,7 @@ class _UserSettingsState extends State<UserSettings> {
 
     return Scaffold(
         appBar: AppBar(
+          //leading: ,
           title: Text('Settings'),
           centerTitle: true,
         ),
@@ -236,7 +237,13 @@ class _UserSettingsState extends State<UserSettings> {
                   child: Consumer<FirebaseMethods>(
                     builder: (context, fbMethods, child) =>
                         fbMethods.updatingProfile
-                            ? CircularProgressIndicator()
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CircularProgressIndicator(),
+                                  Text('   Updating..')
+                                ],
+                              )
                             : TextButton.icon(
                                 onPressed: () {
                                   updateprofile(userData, prefRadius);
