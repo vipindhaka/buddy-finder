@@ -4,11 +4,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:provider/provider.dart';
+import 'package:studypartner/models/customException.dart';
+
 import 'package:studypartner/models/user.dart';
 import 'package:studypartner/providers/locationMethods.dart';
+import 'package:studypartner/widgets/exceptiondisplay.dart';
 
 class FirebaseMethods with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -16,26 +20,45 @@ class FirebaseMethods with ChangeNotifier {
   DocumentSnapshot currentUser;
   bool updatingProfile = false;
 
-  Future<User> signIn() async {
-    GoogleSignInAccount _signInAccount = await _googleSignIn.signIn();
-    GoogleSignInAuthentication _signInAuthentication =
-        await _signInAccount.authentication;
-    final AuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: _signInAuthentication.accessToken,
-      idToken: _signInAuthentication.idToken,
-    );
-    UserCredential _user = await _auth.signInWithCredential(credential);
-    notifyListeners();
-
-    return _user.user;
+  Future<User> signIn(BuildContext context) async {
+    try {
+      GoogleSignInAccount _signInAccount = await _googleSignIn.signIn();
+      GoogleSignInAuthentication _signInAuthentication =
+          await _signInAccount.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: _signInAuthentication.accessToken,
+        idToken: _signInAuthentication.idToken,
+      );
+      UserCredential _user = await _auth.signInWithCredential(credential);
+      // await authenticateUser(_user.user, context);
+      notifyListeners();
+      return _user.user;
+    } on PlatformException catch (e) {
+      print(e.code);
+      showErrorException(context, CustomException(e.code));
+      throw e;
+    } catch (e) {
+      //print(e.toString());
+      showErrorException(
+          context, CustomException('Failed To sign In. Try again'));
+      throw e;
+    }
   }
 
   Future<void> createUser() async {}
 
-  Future<void> signOut() async {
-    await _googleSignIn.signOut();
-    await _auth.signOut();
-    notifyListeners();
+  Future<void> signOut(BuildContext context) async {
+    try {
+      await _googleSignIn.signOut();
+      await _auth.signOut().then((value) {
+        notifyListeners();
+      });
+    } on PlatformException catch (e) {
+      showErrorException(context, CustomException(e.code));
+    } catch (e) {
+      showErrorException(context, CustomException('Failed to sign out'));
+    }
+    //notifyListeners();
   }
 
   User getCurrentUser() {
@@ -44,60 +67,78 @@ class FirebaseMethods with ChangeNotifier {
     return currentUser;
   }
 
-  Future<bool> authenticateUser(User user) async {
-    QuerySnapshot result = await FirebaseFirestore.instance
-        .collection('users')
-        .where('email', isEqualTo: user.email)
-        .get();
+  Future<bool> authenticateUser(User user, BuildContext context) async {
+    try {
+      QuerySnapshot result = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: user.email)
+          .get();
 
-    final List<DocumentSnapshot> docs = result.docs;
+      final List<DocumentSnapshot> docs = result.docs;
 
-    return docs.length == 0 ? true : false;
+      return docs.length == 0 ? true : false;
+    } on PlatformException catch (e) {
+      showErrorException(context, CustomException(e.code));
+      return null;
+    } catch (e) {
+      showErrorException(
+          context, CustomException('Failed to authenticate user'));
+      return null;
+    }
   }
 
   Future<void> updateUserData(
-    DocumentSnapshot userData,
-    double prefradius,
-    double newradius,
-    String interests,
-    String displayName,
-    File image,
-    LocationMethods locationMethods,
-  ) async {
-    String downloadUrl;
-    updatingProfile = true;
-    notifyListeners();
-    if (image != null) {
-      final uploadTask =
-          FirebaseStorage.instance.ref().child('${userData['uid']}.jpg');
-      await uploadTask.putFile(image);
-      downloadUrl = await uploadTask.getDownloadURL();
+      DocumentSnapshot userData,
+      double prefradius,
+      double newradius,
+      String interests,
+      String displayName,
+      File image,
+      LocationMethods locationMethods,
+      BuildContext context) async {
+    try {
+      String downloadUrl;
+      updatingProfile = true;
+      notifyListeners();
+      if (image != null) {
+        final uploadTask =
+            FirebaseStorage.instance.ref().child('${userData['uid']}.jpg');
+        await uploadTask.putFile(image);
+        downloadUrl = await uploadTask.getDownloadURL();
+      }
+      Map<String, dynamic> updateData = {};
+      List<MapEntry<String, dynamic>> entries = [];
+      if (userData['name'] != displayName)
+        entries.add(MapEntry('name', displayName));
+
+      List<String> inte = interests.split(" ");
+
+      if (userData['interests'] != inte)
+        entries.add(MapEntry('interests', inte));
+
+      if (downloadUrl != null)
+        entries.add(MapEntry('profile_photo', downloadUrl));
+
+      updateData.addEntries(entries);
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userData['uid'])
+          .update(updateData);
+
+      if (prefradius != newradius) locationMethods.setRadius(newradius);
+      updatingProfile = false;
+      notifyListeners();
+      Navigator.of(context).pop();
+    } on PlatformException catch (e) {
+      showErrorException(context, CustomException(e.code));
+      updatingProfile = false;
+      notifyListeners();
+    } catch (e) {
+      showErrorException(context, CustomException('Failed to update'));
+      updatingProfile = false;
+      notifyListeners();
     }
-    Map<String, dynamic> updateData = {};
-    List<MapEntry<String, dynamic>> entries = [];
-    if (userData['name'] != displayName)
-      entries.add(MapEntry('name', displayName));
-
-    List<String> inte = interests.split(" ");
-
-    if (userData['interests'] != inte) entries.add(MapEntry('interests', inte));
-
-    if (downloadUrl != null)
-      entries.add(MapEntry('profile_photo', downloadUrl));
-
-    // if (userData['name'] != displayName)
-    //   entries.add(MapEntry('name', displayName));
-
-    updateData.addEntries(entries);
-
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(userData['uid'])
-        .update(updateData);
-
-    if (prefradius != newradius) locationMethods.setRadius(newradius);
-    updatingProfile = false;
-    notifyListeners();
   }
 
   Future<void> addDataToDb(User currentUser, List<String> interests) async {
@@ -114,16 +155,6 @@ class FirebaseMethods with ChangeNotifier {
         .collection('users')
         .doc(currentUser.uid)
         .set(user.toMap(user));
-    // await FirebaseFirestore.instance
-    //     .collection('locations')
-    //     .doc(currentUser.uid)
-    //     .set({
-    //   'userId': currentUser.uid,
-    //   'interests': interests,
-    //   'name': currentUser.displayName,
-    //   'photo': currentUser.photoURL,
-    //   'timestamp': DateTime.now()
-    // });
   }
 
   Future<void> addlocation(User user, GeoFirePoint myLocation) async {
@@ -136,9 +167,7 @@ class FirebaseMethods with ChangeNotifier {
   Future<DocumentSnapshot> getUserData(String uid) async {
     final userdata =
         await FirebaseFirestore.instance.collection('users').doc(uid).get();
-    //final user = AppUser.fromMap(userdata.data());
-    //print(user.name);
-    //return user;
+
     return userdata;
   }
 
@@ -198,12 +227,7 @@ class FirebaseMethods with ChangeNotifier {
       'friendUid': requestReciever['uid'],
       'myUid': requestSender[check == 'requests' ? 'requestSender' : 'uid'],
     });
-    // await FirebaseFirestore.instance
-    //     .collection('requests')
-    //     .doc(requestReciever['uid'])
-    //     .collection('myreq')
-    //     .doc(requestSender[check == 'requests' ? 'requestSender' : 'uid'])
-    //     .delete();
+
     await deleteRequest(requestSender, requestReciever, check);
     notifyListeners();
   }
@@ -283,24 +307,14 @@ class FirebaseMethods with ChangeNotifier {
           .collection('myfriends')
           .get();
       print('here');
-      friendCheck.docs.
-          // firstWhere((element) {
-          //   if (element.id == buddyuid) {
-          //     check = 'friend';
-          //   }
-          //   return element.id == buddyuid;
-          // });
-          forEach((element) {
+      friendCheck.docs.forEach((element) {
         if (element['friendUid'] == buddyuid) {
           check = 'Friends';
         }
       });
 
       print(friendCheck.docs.length.toString());
-      //if (friendCheck == true) check = 'friends';
     }
     return check;
   }
-
-  Future<QuerySnapshot> getConversations() {}
 }

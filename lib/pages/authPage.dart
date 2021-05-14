@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:studypartner/pages/addInterests.dart';
+
 import 'package:studypartner/providers/firebaseMethods.dart';
 
 class AuthPage extends StatefulWidget {
@@ -39,9 +39,14 @@ class _AuthPageState extends State<AuthPage> {
                           setState(() {
                             _isLoading = true;
                           });
-                          await data.signIn();
-
-                          _isLoading = false;
+                          try {
+                            await data.signIn(context);
+                          } catch (e) {
+                            print('an error occured');
+                            setState(() {
+                              _isLoading = false;
+                            });
+                          }
                         },
                         child: Container(
                           height: 100,

@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:studypartner/pages/requests.dart';
 import 'package:studypartner/providers/firebaseMethods.dart';
-import 'package:studypartner/widgets/appDrawer.dart';
-import 'package:studypartner/widgets/header.dart';
 
 class ChatPage extends StatefulWidget {
   final String uid;
@@ -65,7 +63,10 @@ class _ChatPageState extends State<ChatPage> {
               ),
               Text(
                 'Conversations',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: Theme.of(context).primaryColor),
               ),
               Divider(),
               // StreamBuilder(),

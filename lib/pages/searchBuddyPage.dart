@@ -1,12 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:studypartner/models/user.dart';
+
 import 'package:studypartner/providers/firebaseMethods.dart';
 import 'package:studypartner/providers/locationMethods.dart';
-import 'package:studypartner/widgets/appDrawer.dart';
-import 'package:studypartner/widgets/header.dart';
+
 import 'package:studypartner/widgets/nearbyBuddy.dart';
 
 class SearchBuddyPage extends StatefulWidget {
@@ -19,69 +18,97 @@ class _SearchBuddyPageState extends State<SearchBuddyPage> {
   int buddyType = 0;
   // List<DocumentSnapshot> allBuddies = [];
   buildNearBuddy(FirebaseMethods fbdata) {
-    return Consumer<LocationMethods>(
-      builder: (context, locMethods, child) {
-        return FutureBuilder(
-            future: locMethods.getNearbyBuddy(),
-            builder: (ctx, streamSnapshot) {
-              if (streamSnapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              }
-              // if (streamSnapshot.data.length == 0) {
-              //   return Center(
-              //     child: Text('No Buddy Found'),
-              //   );
-              // }
-              //print(streamSnapshot.hasData.toString());
-              return StreamBuilder(
-                stream: streamSnapshot.data,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                  List<DocumentSnapshot> buddies = snapshot.data;
-                  //print(buddies.length.toString());
-                  if (buddies.length - 1 == 0) {
-                    return Center(
-                      child: Text('No buddy Found..'),
-                    );
-                  }
-
-                  //List<double> distance=[];
-                  DocumentSnapshot currentuserdata =
-                      buddies.firstWhere((element) {
-                    return element.id == fbdata.getCurrentUser().uid;
-                  });
-                  // final currentuserdata =
-                  //     AppUser.fromMap(currentuserdoc.data());
-
-                  buddies.removeWhere((docelement) {
-                    return docelement.id == fbdata.getCurrentUser().uid;
-                  });
-                  //print('hello');
-                  //List<double> distance=
-                  if (buddyType == 2) {
-                    //bool similarInterest = false;
-                    fbdata.removeBuddies(buddies, currentuserdata);
-                  }
-                  //allBuddies = buddies;
-                  if (buddies.length == 0) {
-                    return Center(
-                      child: Text('No buddy Found..'),
-                    );
-                  }
-                  return ListView.builder(
-                    itemCount: buddies.length,
-                    itemBuilder: (ctx, index) {
-                      return NearbyBuddy(
-                          buddies, index, currentuserdata, 'search');
-                    },
+    try {
+      return Consumer<LocationMethods>(
+        builder: (context, locMethods, child) {
+          return FutureBuilder(
+              future: locMethods.getNearbyBuddy(context),
+              builder: (ctx, streamSnapshot) {
+                if (streamSnapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                if (streamSnapshot.error != null) {
+                  print(streamSnapshot.error.toString());
+                  PermissionStatus check;
+                  return AlertDialog(
+                    title: Text('Permission Denied'),
+                    content: Text('Please allow location to use this feature'),
+                    actions: [
+                      TextButton(
+                        onPressed: () async {
+                          check = await Permission.location.request();
+                          //print(check.toString());
+                          //setState(() {});
+                          if (check.isPermanentlyDenied) {
+                            //print(check.isPermanentlyDenied.toString());
+                            openAppSettings();
+                          }
+                          //print(check.toString());
+                          bool status = await Permission.location.isGranted;
+                          //print(status.toString());
+                          if (status) {
+                            // Navigator.of(context).pop();
+                            setState(() {});
+                          }
+                          //setState(() {});
+                        },
+                        child: Text(
+                          check.isGranted ? 'Open app Settings' : 'Allow',
+                        ),
+                      )
+                    ],
                   );
-                },
-              );
-            });
-      },
-    );
+                }
+
+                return StreamBuilder(
+                  stream: streamSnapshot.data,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    List<DocumentSnapshot> buddies = snapshot.data;
+                    //print(buddies.length.toString());
+                    print('kind of here');
+                    if (buddies.length - 1 == 0) {
+                      return Center(
+                        child: Text('No buddy Found..'),
+                      );
+                    }
+
+                    //List<double> distance=[];
+                    DocumentSnapshot currentuserdata =
+                        buddies.firstWhere((element) {
+                      return element.id == fbdata.getCurrentUser().uid;
+                    });
+
+                    buddies.removeWhere((docelement) {
+                      return docelement.id == fbdata.getCurrentUser().uid;
+                    });
+
+                    if (buddyType == 2) {
+                      fbdata.removeBuddies(buddies, currentuserdata);
+                    }
+
+                    if (buddies.length == 0) {
+                      return Center(
+                        child: Text('No buddy Found..'),
+                      );
+                    }
+                    return ListView.builder(
+                      itemCount: buddies.length,
+                      itemBuilder: (ctx, index) {
+                        return NearbyBuddy(
+                            buddies, index, currentuserdata, 'search');
+                      },
+                    );
+                  },
+                );
+              });
+        },
+      );
+    } catch (e) {
+      print('definitely here');
+    }
   }
 
   Widget buildSearchButton(Size size, String title, int type) {

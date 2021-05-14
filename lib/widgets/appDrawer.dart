@@ -61,7 +61,27 @@ class AppDrawer extends StatelessWidget {
                       MaterialStateProperty.all(EdgeInsets.only(left: 10))),
               icon: Icon(Icons.logout),
               onPressed: () async {
-                await fbMethods.signOut();
+                showDialog(
+                    context: context,
+                    builder: (ctx) {
+                      return AlertDialog(
+                        title: Text('Are you Sure'),
+                        content: Text('Do you want to logout?'),
+                        actions: [
+                          TextButton(
+                              onPressed: () async {
+                                Navigator.of(context).pop();
+                                await fbMethods.signOut(context);
+                              },
+                              child: Text('Yes')),
+                          TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('No'))
+                        ],
+                      );
+                    });
               },
               label: Text(
                 'Logout',

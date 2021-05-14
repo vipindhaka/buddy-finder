@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:studypartner/pages/ExamPage.dart';
 import 'package:studypartner/pages/chatPage.dart';
-import 'package:studypartner/pages/profilePage.dart';
+
 import 'package:studypartner/pages/searchBuddyPage.dart';
 import 'package:studypartner/providers/firebaseMethods.dart';
 import 'package:studypartner/widgets/appDrawer.dart';
@@ -25,7 +25,6 @@ class _PageViewpageState extends State<PageViewpage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     //setUserData();
     super.initState();
     _pageController = PageController();
@@ -41,7 +40,6 @@ class _PageViewpageState extends State<PageViewpage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     _pageController.dispose();
     super.dispose();
   }

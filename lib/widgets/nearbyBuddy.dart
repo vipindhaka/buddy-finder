@@ -2,10 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:provider/provider.dart';
+
 import 'package:studypartner/models/profile.dart';
 import 'package:studypartner/pages/profilePage.dart';
-import 'package:studypartner/providers/firebaseMethods.dart';
 
 class NearbyBuddy extends StatefulWidget {
   final List<DocumentSnapshot> buddies;

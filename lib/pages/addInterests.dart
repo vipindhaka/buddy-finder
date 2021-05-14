@@ -12,16 +12,9 @@ class AddInterests extends StatefulWidget {
 class _AddInterestsState extends State<AddInterests> {
   TextEditingController _interests = TextEditingController();
   bool _isLoading = false;
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    //_interests = TextEditingController();
-  }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _interests.dispose();
   }

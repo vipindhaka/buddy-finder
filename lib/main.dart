@@ -1,11 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:studypartner/pages/addInterests.dart';
-import 'package:studypartner/pages/authPage.dart';
-import 'package:studypartner/pages/edit_profile.dart';
+
 import 'package:studypartner/pages/getStartedPage.dart';
 import 'package:studypartner/pages/homePage.dart';
 import 'package:studypartner/pages/profilePage.dart';

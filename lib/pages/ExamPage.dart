@@ -1,10 +1,7 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:studypartner/providers/firebaseMethods.dart';
-import 'package:studypartner/widgets/appDrawer.dart';
-import 'package:studypartner/widgets/header.dart';
 
 class ExamPage extends StatefulWidget {
   @override
@@ -17,7 +14,7 @@ class _ExamPageState extends State<ExamPage> {
   //final tabController=TabController(length: length, vsync: vsync)
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    //final size = MediaQuery.of(context).size;
     final data = Provider.of<FirebaseMethods>(context, listen: false);
     return Scaffold(
         //drawer: AppDrawer(),

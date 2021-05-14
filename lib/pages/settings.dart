@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:studypartner/providers/firebaseMethods.dart';
 import 'package:studypartner/providers/locationMethods.dart';
-import 'package:studypartner/widgets/header.dart';
+
 import 'package:studypartner/widgets/radiusSelector.dart';
 
 class UserSettings extends StatefulWidget {
@@ -74,7 +74,6 @@ class _UserSettingsState extends State<UserSettings> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     if (firstTime) {
       setControllers();
       firstTime = false;
@@ -147,9 +146,16 @@ class _UserSettingsState extends State<UserSettings> {
       ));
     } else {
       print('apply changes');
-      await fbMethods.updateUserData(userData, prefradius, radius,
-          interests.text, displayName.text, _pickedImageFile, locmethods);
-      Navigator.of(context).pop();
+      await fbMethods.updateUserData(
+          userData,
+          prefradius,
+          radius,
+          interests.text,
+          displayName.text,
+          _pickedImageFile,
+          locmethods,
+          context);
+      // Navigator.of(context).pop();
       // setState(() {});
     }
   }
@@ -246,7 +252,9 @@ class _UserSettingsState extends State<UserSettings> {
                               )
                             : TextButton.icon(
                                 onPressed: () {
-                                  updateprofile(userData, prefRadius);
+                                  try {
+                                    updateprofile(userData, prefRadius);
+                                  } catch (e) {}
                                 },
                                 icon: Icon(Icons.upload_sharp),
                                 label: Text('Update Profile')),

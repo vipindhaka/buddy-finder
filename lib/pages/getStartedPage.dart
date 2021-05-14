@@ -45,7 +45,7 @@ class GetStarted extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    //final size = MediaQuery.of(context).size;
     final data = Provider.of<FirebaseMethods>(context);
     return Scaffold(
       body: data.getCurrentUser() != null ? HomePage() : AuthPage(),

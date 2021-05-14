@@ -4,10 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:studypartner/models/profile.dart';
 
-import 'package:studypartner/models/user.dart';
-
 import 'package:studypartner/providers/firebaseMethods.dart';
-import 'package:studypartner/widgets/header.dart';
 
 class ProfilePage extends StatefulWidget {
   static const routeName = 'profile-page';
@@ -37,6 +34,14 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       //appBar: header('Profile', context),
+      appBar: AppBar(
+        //elevation: 0,
+        backgroundColor: Colors.transparent,
+        title: Text(
+          buddyuserData['name'],
+          // style: TextStyle(color: Theme.of(context).primaryColor),
+        ),
+      ),
       body: Container(
         margin: const EdgeInsets.all(10),
         alignment: Alignment.center,

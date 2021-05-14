@@ -20,9 +20,8 @@ class _HomePageState extends State<HomePage> {
   DocumentSnapshot userData;
   Future<bool> setupData() async {
     final fbMethods = Provider.of<FirebaseMethods>(context, listen: false);
-    final newUser = await fbMethods.authenticateUser(
-      fbMethods.getCurrentUser(),
-    );
+    final newUser =
+        await fbMethods.authenticateUser(fbMethods.getCurrentUser(), context);
     if (!newUser) {
       userData = await fbMethods.getUserData(fbMethods.getCurrentUser().uid);
     }
@@ -31,7 +30,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final data = Provider.of<FirebaseMethods>(context, listen: false);
+    //final data = Provider.of<FirebaseMethods>(context, listen: false);
     return FutureBuilder(
       future: setupData(),
       builder: (context, snapshot) {

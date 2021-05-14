@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:studypartner/models/user.dart';
+
 import 'package:studypartner/providers/firebaseMethods.dart';
-import 'package:studypartner/widgets/header.dart';
+
 import 'package:studypartner/widgets/nearbyBuddy.dart';
 
 class AllRequest extends StatefulWidget {
@@ -24,7 +24,7 @@ class _AllRequestState extends State<AllRequest> {
 
   @override
   Widget build(BuildContext context) {
-    final data = Provider.of<FirebaseMethods>(context, listen: false);
+    //final data = Provider.of<FirebaseMethods>(context, listen: false);
     //final user = data.getCurrentUser();
     return Scaffold(
       // appBar: header('Requests', context),
