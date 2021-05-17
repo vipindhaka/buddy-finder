@@ -35,7 +35,11 @@ class _HomePageState extends State<HomePage> {
       future: setupData(),
       builder: (context, snapshot) {
         if (!snapshot.hasData)
-          return Center(child: CircularProgressIndicator());
+          return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
 
         final displaywidget =
             snapshot.data ? AddInterests() : PageViewpage(userData);

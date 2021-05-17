@@ -59,7 +59,7 @@ class _PageViewpageState extends State<PageViewpage> {
           ExamPage(),
           //AddInterests(),
           SearchBuddyPage(),
-          ChatPage(userId),
+          ChatPage(),
           //ProfilePage(userId),
         ],
         controller: _pageController,

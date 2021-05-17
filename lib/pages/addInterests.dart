@@ -1,7 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:studypartner/models/customException.dart';
 import 'package:studypartner/pages/homePage.dart';
 import 'package:studypartner/providers/firebaseMethods.dart';
+import 'package:studypartner/widgets/chooseimageDrawer.dart';
+import 'package:studypartner/widgets/exceptiondisplay.dart';
 
 class AddInterests extends StatefulWidget {
   static const routeName = 'add-interests';
@@ -12,6 +18,24 @@ class AddInterests extends StatefulWidget {
 class _AddInterestsState extends State<AddInterests> {
   TextEditingController _interests = TextEditingController();
   bool _isLoading = false;
+  File _pickedImageFile;
+
+  void chooseImage(int no) async {
+    Navigator.of(context).pop();
+    try {
+      final picker = ImagePicker();
+      final pickedImage = await picker.getImage(
+          source: no == 1 ? ImageSource.camera : ImageSource.gallery,
+          maxHeight: 600,
+          maxWidth: 400,
+          imageQuality: 80);
+      setState(() {
+        _pickedImageFile = File(pickedImage.path);
+      });
+    } catch (e) {
+      showErrorException(context, CustomException('Failed to select image'));
+    }
+  }
 
   @override
   void dispose() {
@@ -22,57 +46,102 @@ class _AddInterestsState extends State<AddInterests> {
   @override
   Widget build(BuildContext context) {
     final data = Provider.of<FirebaseMethods>(context, listen: false);
-    return Center(
-      child: Container(
-        margin: EdgeInsets.all(10),
-        height: 180,
-        child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Add Interests',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    )),
-                TextField(
-                  controller: _interests,
-                  decoration: InputDecoration(
-                      hintText: 'Ex. c++ web dev 12th class flutter',
-                      labelText: 'Please enter your interests'),
-                  onChanged: (value) {
-                    setState(() {});
-                  },
-                ),
-                _isLoading
-                    ? CircularProgressIndicator()
-                    : ElevatedButton(
-                        onPressed: _interests.text.isEmpty
-                            ? null
-                            : () async {
-                                List<String> inte = _interests.text.split(" ");
-                                setState(() {
-                                  _isLoading = true;
-                                });
-                                await data.addDataToDb(
-                                    data.getCurrentUser(), inte);
-                                Navigator.of(context)
-                                    .pushReplacementNamed(HomePage.routeName);
-                              },
-                        child: Text('Submit'),
-                        style: ButtonStyle(
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
+    final size = MediaQuery.of(context).size;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Set up your profile',
+        ),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            image: AssetImage('assets/images/books.jpg'),
+          ),
+        ),
+        child: Center(
+          child: Card(
+            elevation: 20,
+            //margin: EdgeInsets.all(10),
+            child: Container(
+              padding: EdgeInsets.all(10),
+              height: 310,
+              width: size.width * .8,
+              child: Column(
+                children: [
+                  CircleAvatar(
+                    backgroundImage: _pickedImageFile != null
+                        ? FileImage(_pickedImageFile)
+                        : null,
+                    child: _pickedImageFile == null
+                        ? Icon(
+                            Icons.person,
+                            size: 40,
+                          )
+                        : Container(),
+                    radius: 40,
+                  ),
+                  TextButton(
+                      onPressed: () {
+                        selectOption(chooseImage, context);
+                      },
+                      child: Text('Add Image')),
+                  Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text('Add Interests')),
+                  TextField(
+                    maxLength: 30,
+                    controller: _interests,
+                    decoration: InputDecoration(
+                        hintStyle: TextStyle(),
+                        hintText: 'Ex. c++ webdev dance poetry 12th flutter',
+                        labelText: 'Enter space separated interests'),
+                    onChanged: (value) {
+                      setState(() {});
+                    },
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  _isLoading
+                      ? CircularProgressIndicator()
+                      : ElevatedButton(
+                          onPressed: _interests.text.length < 3 ||
+                                  _pickedImageFile == null
+                              ? null
+                              : () async {
+                                  List<String> inte =
+                                      _interests.text.split(" ");
+                                  setState(() {
+                                    _isLoading = true;
+                                  });
+                                  try {
+                                    await data.addDataToDb(
+                                        data.getCurrentUser(),
+                                        inte,
+                                        _pickedImageFile);
+                                    Navigator.of(context).pushReplacementNamed(
+                                        HomePage.routeName);
+                                  } catch (e) {
+                                    showErrorException(context,
+                                        CustomException('Please try again'));
+                                  }
+                                },
+                          child: Text('Submit'),
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

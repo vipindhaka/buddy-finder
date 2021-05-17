@@ -37,20 +37,16 @@ class _SearchBuddyPageState extends State<SearchBuddyPage> {
                       TextButton(
                         onPressed: () async {
                           check = await Permission.location.request();
-                          //print(check.toString());
-                          //setState(() {});
+
                           if (check.isPermanentlyDenied) {
-                            //print(check.isPermanentlyDenied.toString());
                             openAppSettings();
                           }
-                          //print(check.toString());
+
                           bool status = await Permission.location.isGranted;
-                          //print(status.toString());
+
                           if (status) {
-                            // Navigator.of(context).pop();
                             setState(() {});
                           }
-                          //setState(() {});
                         },
                         child: Text(
                           check.isGranted ? 'Open app Settings' : 'Allow',

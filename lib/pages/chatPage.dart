@@ -6,8 +6,8 @@ import 'package:studypartner/pages/requests.dart';
 import 'package:studypartner/providers/firebaseMethods.dart';
 
 class ChatPage extends StatefulWidget {
-  final String uid;
-  ChatPage(this.uid);
+  // final String uid;
+  // ChatPage(this.uid);
   @override
   _ChatPageState createState() => _ChatPageState();
 }
@@ -15,14 +15,17 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   QuerySnapshot latestRequest;
   QuerySnapshot conversations;
+  String url;
   Future<void> setData() async {
     final data = Provider.of<FirebaseMethods>(context, listen: false);
-    latestRequest = await data.getLatestRequest(widget.uid);
+    latestRequest = await data.getLatestRequest(data.getCurrentUser());
+    url = await data.getDownloadUrl(data.getCurrentUser().uid);
     //conversations = await data.getConversations(widget.uid);
   }
 
   @override
   Widget build(BuildContext context) {
+    final data = Provider.of<FirebaseMethods>(context, listen: false);
     return Scaffold(
       //drawer: AppDrawer(),
       //appBar: header('Chats', context),
@@ -48,8 +51,7 @@ class _ChatPageState extends State<ChatPage> {
                         Navigator.of(context).pushNamed(AllRequest.routeName);
                       },
                       leading: CircleAvatar(
-                        backgroundImage: CachedNetworkImageProvider(
-                            latereq['profile_photo']),
+                        child: Text(latereq['name'].toString().substring(0, 1)),
                       ),
                       title: Text(
                         'Friend Requests',

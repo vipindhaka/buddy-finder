@@ -19,6 +19,7 @@ class FirebaseMethods with ChangeNotifier {
   GoogleSignIn _googleSignIn = GoogleSignIn();
   DocumentSnapshot currentUser;
   bool updatingProfile = false;
+  //String downloadUrl;
 
   Future<User> signIn(BuildContext context) async {
     try {
@@ -141,11 +142,17 @@ class FirebaseMethods with ChangeNotifier {
     }
   }
 
-  Future<void> addDataToDb(User currentUser, List<String> interests) async {
+  Future<void> addDataToDb(
+      User currentUser, List<String> interests, File image) async {
+    final uploadTask =
+        FirebaseStorage.instance.ref().child('${currentUser.uid}.jpg');
+    await uploadTask.putFile(image);
+    String url = await uploadTask.getDownloadURL();
+
     AppUser user = AppUser(
         uid: currentUser.uid,
         email: currentUser.email,
-        profilePhoto: currentUser.photoURL,
+        profilePhoto: url,
         name: currentUser.displayName,
         //username: username,
         interests: interests,
@@ -182,7 +189,7 @@ class FirebaseMethods with ChangeNotifier {
       'requestSender': requestsender['uid'],
       'requestReciever': requestReciever['uid'],
       'name': requestsender['name'],
-      'profile_photo': requestsender['profile_photo'],
+      //'profile_photo': requestsender['profile_photo'],
       'timestamp': DateTime.now(),
       'interests': requestsender['interests']
     });
@@ -232,46 +239,62 @@ class FirebaseMethods with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<QuerySnapshot> getLatestRequest(String uid) async {
+  Future<QuerySnapshot> getLatestRequest(User user) async {
     final latestRequest = await FirebaseFirestore.instance
         .collection('requests')
-        .doc(uid)
+        .doc(user.uid)
         .collection('myreq')
         .orderBy('timestamp', descending: true)
         .limit(1)
         .get();
+
+    //print(downloadUrl);
     return latestRequest;
+    // String url =
+
+    //.child('${latestRequest.docs[0]['requestSender']}.jpg');
   }
 
   Future<QuerySnapshot> getrequests(String uid) async {
-    final list = await FirebaseFirestore.instance
-        .collection('requests')
-        .doc(uid)
-        .collection('myreq')
-        .get();
-
-    return list;
+    try {
+      final list = await FirebaseFirestore.instance
+          .collection('requests')
+          .doc(uid)
+          .collection('myreq')
+          .get();
+      // print(list.docs[0].id);
+      return list;
+    } on PlatformException catch (e) {
+      // showErrorException(context, CustomException(e.code));
+      throw e;
+    } catch (e) {
+      // showErrorException(context, CustomException('Unable to fetch requests'));
+      throw e;
+    }
   }
 
   void removeBuddies(
       List<DocumentSnapshot> buddies, DocumentSnapshot currentuserdata) {
+    bool check = false;
+    Map<String, bool> interests = {};
     final List<dynamic> currentUserinterests = currentuserdata['interests'];
+    for (var v = 0; v < currentUserinterests.length; v++) {
+      //print('stuck here');
+      if (interests[currentUserinterests[v]] == null) {
+        var element = currentUserinterests[v];
+        interests[element] = true;
+      }
+    }
 
-    buddies.removeWhere((buddyelement) {
-      final List<dynamic> buddyinterests = buddyelement['interests'];
-      bool remove = true;
-
-      currentUserinterests.forEach((element) {
-        for (int i = 0; i < buddyinterests.length; i++) {
-          if (element.toLowerCase() == buddyinterests[i].toLowerCase()) {
-            remove = false;
-            break;
-            //return false;
-          }
-          break;
+    buddies.removeWhere((element) {
+      bool common = false;
+      final List<dynamic> buddyInterests = element['interests'];
+      for (var v = 0; v < buddyInterests.length; v++) {
+        if (interests[buddyInterests[v]] != null) {
+          common = true;
         }
-      });
-      return remove;
+      }
+      return !common;
     });
   }
 
@@ -316,5 +339,11 @@ class FirebaseMethods with ChangeNotifier {
       print(friendCheck.docs.length.toString());
     }
     return check;
+  }
+
+  Future<String> getDownloadUrl(String uid) async {
+    final uploadTask = FirebaseStorage.instance.ref().child('$uid.jpg');
+    String downloadUrl = await uploadTask.getDownloadURL();
+    return downloadUrl;
   }
 }

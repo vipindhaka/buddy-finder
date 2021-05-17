@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:studypartner/providers/firebaseMethods.dart';
 import 'package:studypartner/providers/locationMethods.dart';
+import 'package:studypartner/widgets/chooseimageDrawer.dart';
 
 import 'package:studypartner/widgets/radiusSelector.dart';
 
@@ -79,44 +80,6 @@ class _UserSettingsState extends State<UserSettings> {
       firstTime = false;
     }
     super.didChangeDependencies();
-  }
-
-  selectOption() {
-    return showDialog(
-      context: context,
-      builder: (ctx) => SimpleDialog(
-        title: Text('Choose option'),
-        children: [
-          SimpleDialogOption(
-            onPressed: () {
-              chooseImage(1);
-            },
-            child: Row(children: [
-              Icon(Icons.camera),
-              SizedBox(
-                width: 10,
-              ),
-              Text('Open Camera'),
-            ]),
-          ),
-          SimpleDialogOption(
-            onPressed: () {
-              chooseImage(2);
-            },
-            child: Row(
-              children: [
-                Icon(Icons.photo),
-                SizedBox(
-                  width: 10,
-                ),
-                Text('Choose from gallery'),
-              ],
-              //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   void chooseImage(int no) async {
@@ -200,7 +163,7 @@ class _UserSettingsState extends State<UserSettings> {
                   left: size.width * .35,
                   child: GestureDetector(
                     onTap: () {
-                      selectOption();
+                      selectOption(chooseImage, context);
                     },
                     child: CircleAvatar(
                       radius: size.width * .15,

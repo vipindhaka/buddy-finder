@@ -39,10 +39,22 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'CollabDev',
         theme: ThemeData(
-          // textTheme: TextTheme()
-          //     .copyWith(headline6: TextStyle(fontFamily: 'Signatra')),
           primarySwatch: Colors.blueGrey,
           accentColor: Colors.brown,
+          appBarTheme: AppBarTheme(
+            centerTitle: true,
+            //titleTextStyle: TextStyle(color: Colors.blueGrey),
+            backgroundColor: Colors.transparent,
+            textTheme: TextTheme().copyWith(
+              headline6: TextStyle(
+                  fontSize: 20,
+                  color: Colors.blueGrey,
+                  fontWeight: FontWeight.w500),
+            ),
+            //color: Theme.of(context).primaryColor,
+            elevation: 0,
+            //iconTheme: IconTheme(data: data, child: child),
+          ),
         ),
         home: GetStarted(),
         routes: {
