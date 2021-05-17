@@ -3,9 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 
 import 'package:studypartner/models/profile.dart';
 import 'package:studypartner/pages/profilePage.dart';
+import 'package:studypartner/providers/firebaseMethods.dart';
 
 class NearbyBuddy extends StatefulWidget {
   final List<DocumentSnapshot> buddies;
@@ -25,7 +27,7 @@ class _NearbyBuddyState extends State<NearbyBuddy> {
 
   @override
   Widget build(BuildContext context) {
-    //final fbdata = Provider.of<FirebaseMethods>(context, listen: false);
+    final fbdata = Provider.of<FirebaseMethods>(context, listen: false);
     if (widget.check == 'search') {
       final startuser = widget.currentuserdata['position']['geopoint'];
       final endUser = widget.buddies[widget.index]['position']['geopoint'] ?? 0;
@@ -50,10 +52,19 @@ class _NearbyBuddyState extends State<NearbyBuddy> {
                   backgroundImage: CachedNetworkImageProvider(
                       widget.buddies[widget.index]['profile_photo']),
                 )
-              : CircleAvatar(
-                  child: Text(widget.buddies[widget.index]['name']
-                      .toString()
-                      .substring(0, 1)),
+              : FutureBuilder(
+                  future: fbdata.getDownloadUrl(
+                      widget.buddies[widget.index]['requestSender']),
+                  builder: (ctx, urlSnapshot) {
+                    if (urlSnapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return CircleAvatar();
+                    }
+                    return CircleAvatar(
+                      backgroundImage:
+                          CachedNetworkImageProvider(urlSnapshot.data),
+                    );
+                  },
                 ),
           title: Text(widget.buddies[widget.index]['name']),
           subtitle: Text(widget.buddies[widget.index]['interests'].join(

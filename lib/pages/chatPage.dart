@@ -19,7 +19,7 @@ class _ChatPageState extends State<ChatPage> {
   Future<void> setData() async {
     final data = Provider.of<FirebaseMethods>(context, listen: false);
     latestRequest = await data.getLatestRequest(data.getCurrentUser());
-    url = await data.getDownloadUrl(data.getCurrentUser().uid);
+    url = await data.getDownloadUrl(latestRequest.docs[0]['requestSender']);
     //conversations = await data.getConversations(widget.uid);
   }
 
@@ -51,7 +51,7 @@ class _ChatPageState extends State<ChatPage> {
                         Navigator.of(context).pushNamed(AllRequest.routeName);
                       },
                       leading: CircleAvatar(
-                        child: Text(latereq['name'].toString().substring(0, 1)),
+                        backgroundImage: CachedNetworkImageProvider(url),
                       ),
                       title: Text(
                         'Friend Requests',

@@ -248,7 +248,7 @@ class FirebaseMethods with ChangeNotifier {
         .limit(1)
         .get();
 
-    //print(downloadUrl);
+    //String url = await getDownloadUrl(user.u);
     return latestRequest;
     // String url =
 
