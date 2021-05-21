@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:studypartner/models/profile.dart';
 
 import 'package:studypartner/providers/firebaseMethods.dart';
+import 'package:studypartner/widgets/requestdetails.dart';
 
 class ProfilePage extends StatefulWidget {
   static const routeName = 'profile-page';
@@ -14,13 +15,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  Future<String> checkUser(String buddyuid, String currentUseruid) async {
-    final data = Provider.of<FirebaseMethods>(context, listen: false);
-    final check = await data.checkWhetherAlreadyFriendOrRequestSent(
-        buddyuid, currentUseruid);
-    return check;
-  }
-
   //Future<void>
 
   @override
@@ -29,18 +23,15 @@ class _ProfilePageState extends State<ProfilePage> {
     DocumentSnapshot currentuserData = data.userData;
     DocumentSnapshot buddyuserData = data.buddyData;
     String checkdata = data.check;
+
     print(currentuserData.data().toString());
-    // final fbMethods = Provider.of<FirebaseMethods>(context, listen: false);
-    //final size = MediaQuery.of(context).size;
+    final fbMethods = Provider.of<FirebaseMethods>(context, listen: false);
 
     return Scaffold(
-      //appBar: header('Profile', context),
       appBar: AppBar(
-        //elevation: 0,
         backgroundColor: Colors.transparent,
         title: Text(
           buddyuserData['name'],
-          // style: TextStyle(color: Theme.of(context).primaryColor),
         ),
       ),
       body: Container(
@@ -51,11 +42,29 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              CircleAvatar(
-                radius: 50,
-                backgroundImage:
-                    CachedNetworkImageProvider(buddyuserData['profile_photo']),
-              ),
+              checkdata == 'requests'
+                  ? FutureBuilder(
+                      future: fbMethods
+                          .getDownloadUrl(buddyuserData['requestSender']),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return CircleAvatar(
+                            radius: 50,
+                          );
+                        }
+                        return CircleAvatar(
+                          radius: 50,
+                          backgroundImage:
+                              CachedNetworkImageProvider(snapshot.data),
+                        );
+                      },
+                    )
+                  : CircleAvatar(
+                      radius: 50,
+                      backgroundImage: CachedNetworkImageProvider(
+                          buddyuserData['profile_photo']),
+                    ),
               SizedBox(
                 height: 10,
               ),
@@ -64,7 +73,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 style:
                     TextStyle(fontSize: 25, letterSpacing: 1, wordSpacing: 5),
               ),
-              //Divider(),
               SizedBox(
                 height: 15,
               ),
@@ -72,10 +80,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 buddyuserData['interests'].join(" ") ?? '',
                 style: TextStyle(fontSize: 20),
               ),
-              // Text(
-              //   user.bio == null ? 'Add interests for better results' : '',
-              //   style: TextStyle(fontSize: 12, color: Colors.grey),
-              // ),
               SizedBox(
                 height: 15,
               ),
@@ -85,99 +89,8 @@ class _ProfilePageState extends State<ProfilePage> {
               SizedBox(
                 height: 20,
               ),
-
-              Consumer<FirebaseMethods>(
-                builder: (context, fbMethods, child) {
-                  return FutureBuilder(
-                    future: checkUser(
-                      buddyuserData[
-                          checkdata == 'requests' ? 'requestSender' : 'uid'],
-                      currentuserData['uid'],
-                    ),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
-                      }
-                      print(snapshot.data);
-                      String check = snapshot.data;
-                      return Row(
-                        //mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          TextButton.icon(
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                    Theme.of(context).primaryColor),
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(10),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              icon: Icon(
-                                check == 'Send Request'
-                                    ? Icons.person_add
-                                    : check == 'Request Sent'
-                                        ? Icons.person
-                                        : Icons.check,
-                                color: Colors.white,
-                              ),
-                              label: Text(
-                                check,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 15, color: Colors.white),
-                              ),
-                              onPressed: check == 'Send Request'
-                                  ? () async {
-                                      // setState(() {});
-                                      await fbMethods.sendFriendRequest(
-                                          currentuserData, buddyuserData);
-                                    }
-                                  : check == 'Request Sent'
-                                      ? () async {
-                                          //setState(() {});
-                                          await fbMethods.deleteRequest(
-                                              buddyuserData,
-                                              currentuserData,
-                                              checkdata);
-                                        }
-                                      : () async {
-                                          //setState(() {});
-                                          await fbMethods.confirmRequest(
-                                              buddyuserData,
-                                              currentuserData,
-                                              checkdata);
-                                        }),
-                          if (check == 'Friends')
-                            TextButton.icon(
-                                style: ButtonStyle(
-                                  backgroundColor: MaterialStateProperty.all(
-                                      Theme.of(context).primaryColor),
-                                  shape: MaterialStateProperty.all(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(10),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                onPressed: () {},
-                                icon: Icon(Icons.message, color: Colors.white),
-                                label: Text(
-                                  'Message',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 15, color: Colors.white),
-                                ))
-                        ],
-                      );
-                    },
-                  );
-                },
-              ),
+              RequestChecker(
+                  buddyuserData, currentuserData, checkdata, context),
             ],
           ),
         ),

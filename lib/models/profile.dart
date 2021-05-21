@@ -5,5 +5,9 @@ class ProfilePerson {
   final DocumentSnapshot userData;
   final String check;
 
-  ProfilePerson(this.buddyData, this.userData, this.check);
+  ProfilePerson(
+    this.buddyData,
+    this.userData,
+    this.check,
+  );
 }

@@ -6,31 +6,34 @@ import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 
 import 'package:studypartner/models/profile.dart';
+import 'package:studypartner/pages/individualchatPage.dart';
 import 'package:studypartner/pages/profilePage.dart';
 import 'package:studypartner/providers/firebaseMethods.dart';
 
 class NearbyBuddy extends StatefulWidget {
-  final List<DocumentSnapshot> buddies;
-  final int index;
+  final DocumentSnapshot buddy;
+
   final DocumentSnapshot currentuserdata;
   final String check;
-  NearbyBuddy(this.buddies, this.index, this.currentuserdata, this.check);
+  NearbyBuddy(
+    this.buddy,
+    this.currentuserdata,
+    this.check,
+  );
 
   @override
   _NearbyBuddyState createState() => _NearbyBuddyState();
 }
 
 class _NearbyBuddyState extends State<NearbyBuddy> {
-  //String _isLoading = 'add';
   double km;
-  String url;
 
   @override
   Widget build(BuildContext context) {
     final fbdata = Provider.of<FirebaseMethods>(context, listen: false);
     if (widget.check == 'search') {
       final startuser = widget.currentuserdata['position']['geopoint'];
-      final endUser = widget.buddies[widget.index]['position']['geopoint'] ?? 0;
+      final endUser = widget.buddy['position']['geopoint'] ?? 0;
       double distanceInMeters = Geolocator.distanceBetween(startuser.latitude,
           startuser.longitude, endUser.latitude, endUser.longitude);
       km = distanceInMeters / 1000;
@@ -39,22 +42,23 @@ class _NearbyBuddyState extends State<NearbyBuddy> {
     return Container(
       child: ListTile(
           onTap: () {
-            Navigator.of(context).pushNamed(ProfilePage.routeName,
-                arguments: ProfilePerson(
-                  widget.buddies[widget.index],
-                  widget.currentuserdata,
-                  widget.check,
-                ));
+            widget.check == 'friends'
+                ? Navigator.of(context)
+                    .pushReplacementNamed(IndividualChatScreen.routeName)
+                : Navigator.of(context).pushNamed(ProfilePage.routeName,
+                    arguments: ProfilePerson(
+                        widget.buddy, widget.currentuserdata, widget.check));
           },
           leading: widget.check == 'search'
               ? CircleAvatar(
                   //radius: 50,
-                  backgroundImage: CachedNetworkImageProvider(
-                      widget.buddies[widget.index]['profile_photo']),
+                  backgroundImage:
+                      CachedNetworkImageProvider(widget.buddy['profile_photo']),
                 )
               : FutureBuilder(
-                  future: fbdata.getDownloadUrl(
-                      widget.buddies[widget.index]['requestSender']),
+                  future: fbdata.getDownloadUrl(widget.check == 'requests'
+                      ? widget.buddy['requestSender']
+                      : widget.buddy['friendUid']),
                   builder: (ctx, urlSnapshot) {
                     if (urlSnapshot.connectionState ==
                         ConnectionState.waiting) {
@@ -66,9 +70,10 @@ class _NearbyBuddyState extends State<NearbyBuddy> {
                     );
                   },
                 ),
-          title: Text(widget.buddies[widget.index]['name']),
-          subtitle: Text(widget.buddies[widget.index]['interests'].join(
-              " ")), //Text(km.toStringAsFixed(2).toString() + ' km away'),
+          title: Text(widget.buddy['name']),
+          subtitle: Text(
+            widget.buddy['interests'].join(" "),
+          ),
           trailing: widget.check == 'search'
               ? Text(km.toStringAsFixed(2).toString() + ' km away')
               : Text('')),

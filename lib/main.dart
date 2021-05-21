@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:studypartner/pages/addInterests.dart';
+import 'package:studypartner/pages/friendsPage.dart';
 
 import 'package:studypartner/pages/getStartedPage.dart';
 import 'package:studypartner/pages/homePage.dart';
+import 'package:studypartner/pages/individualchatPage.dart';
 import 'package:studypartner/pages/profilePage.dart';
 import 'package:studypartner/pages/requests.dart';
 import 'package:studypartner/pages/settings.dart';
@@ -40,21 +42,18 @@ class MyApp extends StatelessWidget {
         title: 'CollabDev',
         theme: ThemeData(
           primarySwatch: Colors.blueGrey,
-          accentColor: Colors.brown,
+          accentColor: Colors.blueGrey,
           appBarTheme: AppBarTheme(
-            centerTitle: true,
-            //titleTextStyle: TextStyle(color: Colors.blueGrey),
-            backgroundColor: Colors.transparent,
-            textTheme: TextTheme().copyWith(
-              headline6: TextStyle(
-                  fontSize: 20,
-                  color: Colors.blueGrey,
-                  fontWeight: FontWeight.w500),
-            ),
-            //color: Theme.of(context).primaryColor,
-            elevation: 0,
-            //iconTheme: IconTheme(data: data, child: child),
-          ),
+              centerTitle: true,
+              backgroundColor: Colors.transparent,
+              textTheme: TextTheme().copyWith(
+                headline6: TextStyle(
+                    fontSize: 20,
+                    color: Colors.blueGrey,
+                    fontWeight: FontWeight.w500),
+              ),
+              elevation: 0,
+              iconTheme: IconThemeData(color: Colors.blueGrey)),
         ),
         home: GetStarted(),
         routes: {
@@ -64,6 +63,8 @@ class MyApp extends StatelessWidget {
           HomePage.routeName: (ctx) => HomePage(),
           ProfilePage.routeName: (ctx) => ProfilePage(),
           UserSettings.routeName: (ctx) => UserSettings(),
+          FriendsPage.routeName: (ctx) => FriendsPage(),
+          IndividualChatScreen.routeName: (ctx) => IndividualChatScreen(),
         },
       ),
     );

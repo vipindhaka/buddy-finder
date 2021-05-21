@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:studypartner/pages/friendsPage.dart';
 import 'package:studypartner/pages/requests.dart';
 import 'package:studypartner/providers/firebaseMethods.dart';
 
@@ -74,6 +75,13 @@ class _ChatPageState extends State<ChatPage> {
               // StreamBuilder(),
             ],
           );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        elevation: 10,
+        child: Icon(Icons.person_add_alt_1_outlined),
+        onPressed: () {
+          Navigator.of(context).pushNamed(FriendsPage.routeName);
         },
       ),
     );

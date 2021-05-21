@@ -193,42 +193,48 @@ class FirebaseMethods with ChangeNotifier {
       'timestamp': DateTime.now(),
       'interests': requestsender['interests']
     });
-    notifyListeners();
+    //notifyListeners();
   }
 
   Future<void> deleteRequest(DocumentSnapshot requestSender,
       DocumentSnapshot requestReciever, String check) async {
-    print('deleting');
-    await FirebaseFirestore.instance
-        .collection('requests')
-        .doc(requestReciever['uid'])
-        .collection('myreq')
-        .doc(requestSender[check == 'requests' ? 'requestSender' : 'uid'])
-        .delete();
-    notifyListeners();
+    try {
+      print('deleting');
+      await FirebaseFirestore.instance
+          .collection('requests')
+          .doc(requestReciever['uid'])
+          .collection('myreq')
+          .doc(requestSender[check == 'requests' ? 'requestSender' : 'uid'])
+          .delete();
+      // notifyListeners();
+    } catch (e) {
+      print('error');
+    }
   }
 
   Future<void> confirmRequest(DocumentSnapshot requestSender,
       DocumentSnapshot requestReciever, String check) async {
+    //print('works');
     await FirebaseFirestore.instance
         .collection('friends')
         .doc(requestReciever['uid'])
         .collection('myfriends')
         .add({
       'name': requestSender['name'],
-      'profile_photo': requestSender['profile_photo'],
+      //'profile_photo': requestSender['profile_photo'],
       'interests': requestSender['interests'],
       'timestamp': DateTime.now(),
       'friendUid': requestSender[check == 'requests' ? 'requestSender' : 'uid'],
       'myUid': requestReciever['uid'],
     });
+    //print('works');
     await FirebaseFirestore.instance
         .collection('friends')
         .doc(requestSender[check == 'requests' ? 'requestSender' : 'uid'])
         .collection('myfriends')
         .add({
       'name': requestReciever['name'],
-      'profile_photo': requestReciever['profile_photo'],
+      //'profile_photo': requestReciever['profile_photo'],
       'interests': requestReciever['interests'],
       'timestamp': DateTime.now(),
       'friendUid': requestReciever['uid'],

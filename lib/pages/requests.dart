@@ -40,7 +40,7 @@ class _AllRequestState extends State<AllRequest> {
           return ListView.builder(
             itemCount: datalist.length,
             itemBuilder: (context, index) {
-              return NearbyBuddy(datalist, index, userdata, 'requests');
+              return NearbyBuddy(datalist[index], userdata, 'requests');
             },
           );
         },

@@ -94,7 +94,7 @@ class _SearchBuddyPageState extends State<SearchBuddyPage> {
                       itemCount: buddies.length,
                       itemBuilder: (ctx, index) {
                         return NearbyBuddy(
-                            buddies, index, currentuserdata, 'search');
+                            buddies[index], currentuserdata, 'search');
                       },
                     );
                   },
