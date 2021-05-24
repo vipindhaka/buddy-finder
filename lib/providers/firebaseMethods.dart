@@ -13,6 +13,7 @@ import 'package:studypartner/models/customException.dart';
 import 'package:studypartner/models/user.dart';
 import 'package:studypartner/providers/locationMethods.dart';
 import 'package:studypartner/widgets/exceptiondisplay.dart';
+import '../models/messagesingle.dart';
 
 class FirebaseMethods with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -286,8 +287,8 @@ class FirebaseMethods with ChangeNotifier {
     final List<dynamic> currentUserinterests = currentuserdata['interests'];
     for (var v = 0; v < currentUserinterests.length; v++) {
       //print('stuck here');
-      if (interests[currentUserinterests[v]] == null) {
-        var element = currentUserinterests[v];
+      if (interests[currentUserinterests[v].toString().toLowerCase()] == null) {
+        var element = currentUserinterests[v].toString().toLowerCase();
         interests[element] = true;
       }
     }
@@ -296,7 +297,7 @@ class FirebaseMethods with ChangeNotifier {
       bool common = false;
       final List<dynamic> buddyInterests = element['interests'];
       for (var v = 0; v < buddyInterests.length; v++) {
-        if (interests[buddyInterests[v]] != null) {
+        if (interests[buddyInterests[v].toString().toLowerCase()] != null) {
           common = true;
         }
       }
@@ -351,5 +352,41 @@ class FirebaseMethods with ChangeNotifier {
     final uploadTask = FirebaseStorage.instance.ref().child('$uid.jpg');
     String downloadUrl = await uploadTask.getDownloadURL();
     return downloadUrl;
+  }
+
+  Future<void> getOrCreateConversation(String currentUserid, String recipientId,
+      void onSuccess(String conversationId)) async {
+    try {
+      DocumentSnapshot conversation = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUserid)
+          .collection('conversations')
+          .doc(recipientId)
+          .get();
+      if (conversation.data() != null) {
+        return onSuccess(conversation.data()['conversationID']);
+      } else {
+        DocumentReference conversationref =
+            FirebaseFirestore.instance.collection('allConversations').doc();
+        await conversationref.set(
+          {
+            'members': [currentUserid, recipientId],
+            'ownerId': currentUserid,
+          },
+        );
+        return onSuccess(conversationref.id);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> sendingMessage(
+      String conversationId, MessageSingle message) async {
+    await FirebaseFirestore.instance
+        .collection('allConversations')
+        .doc(conversationId)
+        .collection('chats')
+        .add(message.toMap(message));
   }
 }

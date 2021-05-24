@@ -28,7 +28,7 @@ class _RadiusSelectorState extends State<RadiusSelector> {
               style: TextStyle(color: Colors.grey),
             ),
             SizedBox(
-              width: size.width * .53,
+              width: size.width * .45,
             ),
             Text(
               radius.toInt().toString() + ' km',
@@ -49,7 +49,7 @@ class _RadiusSelectorState extends State<RadiusSelector> {
             //divisions: 10,
             //label: 'Radius',
             min: 5.0,
-            max: 500.0,
+            max: 1000.0,
             value: radius,
             onChanged: (newradius) {
               setState(() {

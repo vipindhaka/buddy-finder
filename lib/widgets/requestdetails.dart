@@ -93,18 +93,22 @@ class _RequestCheckerState extends State<RequestChecker> {
                                   CustomException('Failed to delete request'));
                             }
                           }
-                        : () async {
-                            try {
-                              await fbMethods.confirmRequest(
-                                  widget.buddyuserData,
-                                  widget.currentuserData,
-                                  widget.checkdata);
-                              setState(() {});
-                            } catch (e) {
-                              showErrorException(context,
-                                  CustomException('Failed to confirm request'));
-                            }
-                          }),
+                        : check == 'Confirm Request'
+                            ? () async {
+                                try {
+                                  await fbMethods.confirmRequest(
+                                      widget.buddyuserData,
+                                      widget.currentuserData,
+                                      widget.checkdata);
+                                  setState(() {});
+                                } catch (e) {
+                                  showErrorException(
+                                      context,
+                                      CustomException(
+                                          'Failed to confirm request'));
+                                }
+                              }
+                            : null),
             if (check == 'Friends')
               TextButton.icon(
                   style: ButtonStyle(

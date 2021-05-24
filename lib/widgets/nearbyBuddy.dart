@@ -43,11 +43,16 @@ class _NearbyBuddyState extends State<NearbyBuddy> {
       child: ListTile(
           onTap: () {
             widget.check == 'friends'
-                ? Navigator.of(context)
-                    .pushReplacementNamed(IndividualChatScreen.routeName)
-                : Navigator.of(context).pushNamed(ProfilePage.routeName,
-                    arguments: ProfilePerson(
-                        widget.buddy, widget.currentuserdata, widget.check));
+                ? Navigator.of(context).pushReplacementNamed(
+                    IndividualChatScreen.routeName,
+                    arguments: widget.buddy)
+                : widget.check != 'chats'
+                    ? Navigator.of(context).pushNamed(ProfilePage.routeName,
+                        arguments: ProfilePerson(
+                            widget.buddy, widget.currentuserdata, widget.check))
+                    : Navigator.of(context).pushNamed(
+                        IndividualChatScreen.routeName,
+                        arguments: widget.buddy);
           },
           leading: widget.check == 'search'
               ? CircleAvatar(
@@ -58,7 +63,9 @@ class _NearbyBuddyState extends State<NearbyBuddy> {
               : FutureBuilder(
                   future: fbdata.getDownloadUrl(widget.check == 'requests'
                       ? widget.buddy['requestSender']
-                      : widget.buddy['friendUid']),
+                      : widget.check != 'chats'
+                          ? widget.buddy['friendUid']
+                          : widget.buddy.id),
                   builder: (ctx, urlSnapshot) {
                     if (urlSnapshot.connectionState ==
                         ConnectionState.waiting) {
@@ -71,9 +78,11 @@ class _NearbyBuddyState extends State<NearbyBuddy> {
                   },
                 ),
           title: Text(widget.buddy['name']),
-          subtitle: Text(
-            widget.buddy['interests'].join(" "),
-          ),
+          subtitle: widget.check != 'chats'
+              ? Text(
+                  widget.buddy['interests'].join(" "),
+                )
+              : Text('LastMessage'),
           trailing: widget.check == 'search'
               ? Text(km.toStringAsFixed(2).toString() + ' km away')
               : Text('')),

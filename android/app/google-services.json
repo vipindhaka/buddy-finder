@@ -1,20 +1,20 @@
 {
   "project_info": {
-    "project_number": "503394137889",
-    "project_id": "studypartner-f5beb",
-    "storage_bucket": "studypartner-f5beb.appspot.com"
+    "project_number": "276278021765",
+    "project_id": "collabdev-7f89d",
+    "storage_bucket": "collabdev-7f89d.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:503394137889:android:e2fdccf4c59b0a0a2ff060",
+        "mobilesdk_app_id": "1:276278021765:android:f4a3af778ba7cb3625a3ec",
         "android_client_info": {
           "package_name": "com.vipin.studypartner"
         }
       },
       "oauth_client": [
         {
-          "client_id": "503394137889-fgvm5pko3d53spmpl2dcnvnhvrm32otf.apps.googleusercontent.com",
+          "client_id": "276278021765-rbsabdd2v9ktku3hackediuoicmj1sl5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.vipin.studypartner",
@@ -22,20 +22,20 @@
           }
         },
         {
-          "client_id": "503394137889-2c2r6nlbgefm8b8jentd84kmcnrhcjk4.apps.googleusercontent.com",
+          "client_id": "276278021765-e71sj1shhc3rdq868ckhjenm7pe2mnib.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCNrIIjzHo_S-y_nv0sd5dn-f-M-YtOrdc"
+          "current_key": "AIzaSyCwP0iOjJDNOEFw2FVQPgGLmAqB9GA_0sE"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "503394137889-2c2r6nlbgefm8b8jentd84kmcnrhcjk4.apps.googleusercontent.com",
+              "client_id": "276278021765-e71sj1shhc3rdq868ckhjenm7pe2mnib.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

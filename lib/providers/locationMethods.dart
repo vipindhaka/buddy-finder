@@ -31,12 +31,13 @@ class LocationMethods with ChangeNotifier {
       GeoFirePoint center =
           geo.point(latitude: position.latitude, longitude: position.longitude);
       await fbMethods.addlocation(user, myLocation);
-      Stream<List<DocumentSnapshot>> stream =
-          geo.collection(collectionRef: collection).within(
-                center: center,
-                radius: _sharedPreferences.getDouble('radius'),
-                field: 'position',
-              );
+      Stream<List<DocumentSnapshot>> stream = geo
+          .collection(collectionRef: collection)
+          .within(
+              center: center,
+              radius: _sharedPreferences.getDouble('radius'),
+              field: 'position',
+              strictMode: true);
 
       return stream;
     } on PlatformException catch (e) {

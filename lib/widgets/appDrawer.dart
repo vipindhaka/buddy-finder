@@ -51,7 +51,7 @@ class AppDrawer extends StatelessWidget {
                       .pushNamed(UserSettings.routeName, arguments: userData);
                 },
                 label: Text(
-                  'Settings',
+                  'Edit Profile',
                   style: TextStyle(fontSize: 20),
                 )),
             Divider(),

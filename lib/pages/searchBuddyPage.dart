@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:studypartner/helper/adHelper.dart';
 
 import 'package:studypartner/providers/firebaseMethods.dart';
 import 'package:studypartner/providers/locationMethods.dart';
@@ -16,7 +18,18 @@ class SearchBuddyPage extends StatefulWidget {
 class _SearchBuddyPageState extends State<SearchBuddyPage> {
   bool _isLoading = false;
   int buddyType = 0;
-  // List<DocumentSnapshot> allBuddies = [];
+  static final _kAdIndex = 1;
+
+  BannerAd _ad;
+
+  bool _isAdLoaded = false;
+  int _getSearchItemIndex(int rawIndex) {
+    if (rawIndex >= _kAdIndex && _isAdLoaded) {
+      return rawIndex - 1;
+    }
+    return rawIndex;
+  }
+
   buildNearBuddy(FirebaseMethods fbdata) {
     try {
       return Consumer<LocationMethods>(
@@ -27,6 +40,7 @@ class _SearchBuddyPageState extends State<SearchBuddyPage> {
                 if (streamSnapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 }
+                // print('rebuilt');
                 if (streamSnapshot.error != null) {
                   print(streamSnapshot.error.toString());
                   PermissionStatus check;
@@ -91,12 +105,22 @@ class _SearchBuddyPageState extends State<SearchBuddyPage> {
                       );
                     }
                     return ListView.builder(
-                      itemCount: buddies.length,
-                      itemBuilder: (ctx, index) {
-                        return NearbyBuddy(
-                            buddies[index], currentuserdata, 'search');
-                      },
-                    );
+                        itemCount: buddies.length + (_isAdLoaded ? 1 : 0),
+                        itemBuilder: (ctx, index) {
+                          if (_isAdLoaded && index == _kAdIndex) {
+                            return Container(
+                              child: AdWidget(ad: _ad),
+                              width: _ad.size.width.toDouble(),
+                              height: 72.0,
+                              alignment: Alignment.center,
+                            );
+                          } else {
+                            return NearbyBuddy(
+                                buddies[_getSearchItemIndex(index)],
+                                currentuserdata,
+                                'search');
+                          }
+                        });
                   },
                 );
               });
@@ -168,7 +192,41 @@ class _SearchBuddyPageState extends State<SearchBuddyPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    // TODO: Create a BannerAd instance
+    _ad = BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      size: AdSize.banner,
+      request: AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (_) {
+          setState(() {
+            _isAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          // Releases an ad resource when it fails to load
+          ad.dispose();
+
+          print('Ad load failed (code=${error.code} message=${error.message})');
+        },
+      ),
+    );
+
+    // TODO: Load an ad
+    _ad.load();
+  }
+
+  @override
+  void dispose() {
+    _ad.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    //super.build(context);
     final size = MediaQuery.of(context).size;
     final locData = Provider.of<LocationMethods>(context);
     final fbData = Provider.of<FirebaseMethods>(context, listen: false);
@@ -185,4 +243,8 @@ class _SearchBuddyPageState extends State<SearchBuddyPage> {
         // ),
         );
   }
+
+  // @override
+  // // TODO: implement wantKeepAlive
+  // bool get wantKeepAlive => true;
 }

@@ -8,21 +8,15 @@ class ExamPage extends StatefulWidget {
   _ExamPageState createState() => _ExamPageState();
 }
 
-class _ExamPageState extends State<ExamPage> {
-  // Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  // double _radius;
-  //final tabController=TabController(length: length, vsync: vsync)
+class _ExamPageState extends State<ExamPage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   @override
   Widget build(BuildContext context) {
-    //final size = MediaQuery.of(context).size;
+    super.build(context);
     final data = Provider.of<FirebaseMethods>(context, listen: false);
     return Scaffold(
-        //drawer: AppDrawer(),
-        // appBar: header(
-        //   'Collab Dev',
-        //   context,
-        //   url: data.getCurrentUser().photoURL,
-        // ),
         body: FutureBuilder(
       future: data.getUserData(data.getCurrentUser().uid),
       builder: (ctx, userSnapshot) {

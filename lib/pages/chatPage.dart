@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:studypartner/pages/friendsPage.dart';
 import 'package:studypartner/pages/requests.dart';
 import 'package:studypartner/providers/firebaseMethods.dart';
+import 'package:studypartner/widgets/nearbyBuddy.dart';
 
 class ChatPage extends StatefulWidget {
   // final String uid;
@@ -13,7 +14,8 @@ class ChatPage extends StatefulWidget {
   _ChatPageState createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatPageState extends State<ChatPage>
+    with AutomaticKeepAliveClientMixin {
   QuerySnapshot latestRequest;
   QuerySnapshot conversations;
   String url;
@@ -26,10 +28,10 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final data = Provider.of<FirebaseMethods>(context, listen: false);
     return Scaffold(
-      //drawer: AppDrawer(),
-      //appBar: header('Chats', context),
+      
       body: FutureBuilder(
         future: setData(),
         builder: (ctx, dataSnapshot) {
@@ -38,9 +40,6 @@ class _ChatPageState extends State<ChatPage> {
               child: CircularProgressIndicator(),
             );
           }
-          // if (latestRequest.docs.isEmpty) {
-          //   //return Text('');
-          // }
           final latereq =
               latestRequest.docs.isNotEmpty ? latestRequest.docs[0] : null;
 
@@ -65,14 +64,38 @@ class _ChatPageState extends State<ChatPage> {
                 height: 10,
               ),
               Text(
-                'Conversations',
+                'Chats',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
                     color: Theme.of(context).primaryColor),
               ),
               Divider(),
-              // StreamBuilder(),
+              StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(data.getCurrentUser().uid)
+                    .collection('conversations')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: Text('Getting Chats'));
+                  }
+                  final chats = snapshot.data.docs;
+                  print(chats.toString());
+                  return Expanded(
+                    child: ListView.builder(
+                      itemCount: chats.length,
+                      itemBuilder: (context, index) {
+                        // if (chats[index].reference.collection('chats').get()) {
+                        //   return Container();
+                        // }
+                        return NearbyBuddy(chats[index], null, 'chats');
+                      },
+                    ),
+                  );
+                },
+              )
             ],
           );
         },
@@ -86,4 +109,7 @@ class _ChatPageState extends State<ChatPage> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

@@ -67,80 +67,83 @@ class _AddInterestsState extends State<AddInterests> {
             //margin: EdgeInsets.all(10),
             child: Container(
               padding: EdgeInsets.all(10),
-              height: 310,
+              height: 320,
               width: size.width * .8,
-              child: Column(
-                children: [
-                  CircleAvatar(
-                    backgroundImage: _pickedImageFile != null
-                        ? FileImage(_pickedImageFile)
-                        : null,
-                    child: _pickedImageFile == null
-                        ? Icon(
-                            Icons.person,
-                            size: 40,
-                          )
-                        : Container(),
-                    radius: 40,
-                  ),
-                  TextButton(
-                      onPressed: () {
-                        selectOption(chooseImage, context);
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: _pickedImageFile != null
+                          ? FileImage(_pickedImageFile)
+                          : null,
+                      child: _pickedImageFile == null
+                          ? Icon(
+                              Icons.person,
+                              size: 40,
+                            )
+                          : Container(),
+                      radius: 40,
+                    ),
+                    TextButton(
+                        onPressed: () {
+                          selectOption(chooseImage, context);
+                        },
+                        child: Text('Add Image')),
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text('Add Interests')),
+                    TextField(
+                      maxLength: 30,
+                      controller: _interests,
+                      decoration: InputDecoration(
+                          hintStyle: TextStyle(),
+                          hintText: 'Ex. c++ webdev dance poetry 12th flutter',
+                          labelText: 'Enter space separated interests'),
+                      onChanged: (value) {
+                        setState(() {});
                       },
-                      child: Text('Add Image')),
-                  Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text('Add Interests')),
-                  TextField(
-                    maxLength: 30,
-                    controller: _interests,
-                    decoration: InputDecoration(
-                        hintStyle: TextStyle(),
-                        hintText: 'Ex. c++ webdev dance poetry 12th flutter',
-                        labelText: 'Enter space separated interests'),
-                    onChanged: (value) {
-                      setState(() {});
-                    },
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  _isLoading
-                      ? CircularProgressIndicator()
-                      : ElevatedButton(
-                          onPressed: _interests.text.length < 3 ||
-                                  _pickedImageFile == null
-                              ? null
-                              : () async {
-                                  List<String> inte =
-                                      _interests.text.split(" ");
-                                  setState(() {
-                                    _isLoading = true;
-                                  });
-                                  try {
-                                    await data.addDataToDb(
-                                        data.getCurrentUser(),
-                                        inte,
-                                        _pickedImageFile);
-                                    Navigator.of(context).pushReplacementNamed(
-                                        HomePage.routeName);
-                                  } catch (e) {
-                                    showErrorException(context,
-                                        CustomException('Please try again'));
-                                  }
-                                },
-                          child: Text('Submit'),
-                          style: ButtonStyle(
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    _isLoading
+                        ? CircularProgressIndicator()
+                        : ElevatedButton(
+                            onPressed: _interests.text.length < 3 ||
+                                    _pickedImageFile == null
+                                ? null
+                                : () async {
+                                    List<String> inte =
+                                        _interests.text.split(" ");
+                                    setState(() {
+                                      _isLoading = true;
+                                    });
+                                    try {
+                                      await data.addDataToDb(
+                                          data.getCurrentUser(),
+                                          inte,
+                                          _pickedImageFile);
+                                      Navigator.of(context)
+                                          .pushReplacementNamed(
+                                              HomePage.routeName);
+                                    } catch (e) {
+                                      showErrorException(context,
+                                          CustomException('Please try again'));
+                                    }
+                                  },
+                            child: Text('Submit'),
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

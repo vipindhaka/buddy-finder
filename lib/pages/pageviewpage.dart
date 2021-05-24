@@ -31,13 +31,6 @@ class _PageViewpageState extends State<PageViewpage> {
     //checkUser();
   }
 
-  // Future<void> setUserData() async {
-  //   final FirebaseMethods fbMethods =
-  //       Provider.of<FirebaseMethods>(context, listen: false);
-  //   final User userdata = fbMethods.getCurrentUser();
-  //   user = await fbMethods.getUserData(userdata.uid);
-  // }
-
   @override
   void dispose() {
     _pageController.dispose();
@@ -73,12 +66,9 @@ class _PageViewpageState extends State<PageViewpage> {
       bottomNavigationBar: BottomNavigationBar(
         fixedColor: Theme.of(context).accentColor,
         unselectedItemColor: Colors.grey,
-        //iconSize: ,
-        //border: Border.all(),
-        // activeColor: Theme.of(context).accentColor,
         onTap: (value) {
           _pageController.animateToPage(value,
-              duration: Duration(milliseconds: 300), curve: Curves.bounceIn);
+              duration: Duration(milliseconds: 300), curve: Curves.easeIn);
         },
         currentIndex: _page,
         items: [
