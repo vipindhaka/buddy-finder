@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+//import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:studypartner/helper/adHelper.dart';
+//import 'package:studypartner/helper/adHelper.dart';
 
 import 'package:studypartner/providers/firebaseMethods.dart';
 import 'package:studypartner/providers/locationMethods.dart';
+import 'package:studypartner/widgets/bannerad.dart';
 
 import 'package:studypartner/widgets/nearbyBuddy.dart';
 
@@ -20,17 +21,15 @@ class _SearchBuddyPageState extends State<SearchBuddyPage> {
   int buddyType = 0;
   static final _kAdIndex = 1;
 
-  BannerAd _ad;
-
-  bool _isAdLoaded = false;
   int _getSearchItemIndex(int rawIndex) {
-    if (rawIndex >= _kAdIndex && _isAdLoaded) {
+    if (rawIndex >= _kAdIndex) {
       return rawIndex - 1;
     }
     return rawIndex;
   }
 
   buildNearBuddy(FirebaseMethods fbdata) {
+    //final size = MediaQuery.of(context).size;
     try {
       return Consumer<LocationMethods>(
         builder: (context, locMethods, child) {
@@ -105,15 +104,11 @@ class _SearchBuddyPageState extends State<SearchBuddyPage> {
                       );
                     }
                     return ListView.builder(
-                        itemCount: buddies.length + (_isAdLoaded ? 1 : 0),
+                        itemCount: buddies.length + 1,
                         itemBuilder: (ctx, index) {
-                          if (_isAdLoaded && index == _kAdIndex) {
-                            return Container(
-                              child: AdWidget(ad: _ad),
-                              width: _ad.size.width.toDouble(),
-                              height: 72.0,
-                              alignment: Alignment.center,
-                            );
+                          if (index == _kAdIndex) {
+                            //_kAdIndex = 2;
+                            return ShowBannerAd();
                           } else {
                             return NearbyBuddy(
                                 buddies[_getSearchItemIndex(index)],
@@ -133,9 +128,7 @@ class _SearchBuddyPageState extends State<SearchBuddyPage> {
 
   Widget buildSearchButton(Size size, String title, int type) {
     return Container(
-      //color: Colors.white,
       height: 50,
-      //width: size.width * .4,
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(30),
@@ -173,10 +166,9 @@ class _SearchBuddyPageState extends State<SearchBuddyPage> {
       child: Stack(
         children: [
           Positioned(
-            top: size.height * .6,
+            top: size.height * .5,
             left: size.width * .2,
             child: Column(
-              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 buildSearchButton(size, 'Search Nearby', 1),
                 SizedBox(
@@ -194,33 +186,10 @@ class _SearchBuddyPageState extends State<SearchBuddyPage> {
   @override
   void initState() {
     super.initState();
-    // TODO: Create a BannerAd instance
-    _ad = BannerAd(
-      adUnitId: AdHelper.bannerAdUnitId,
-      size: AdSize.banner,
-      request: AdRequest(),
-      listener: BannerAdListener(
-        onAdLoaded: (_) {
-          setState(() {
-            _isAdLoaded = true;
-          });
-        },
-        onAdFailedToLoad: (ad, error) {
-          // Releases an ad resource when it fails to load
-          ad.dispose();
-
-          print('Ad load failed (code=${error.code} message=${error.message})');
-        },
-      ),
-    );
-
-    // TODO: Load an ad
-    _ad.load();
   }
 
   @override
   void dispose() {
-    _ad.dispose();
     super.dispose();
   }
 
@@ -230,21 +199,14 @@ class _SearchBuddyPageState extends State<SearchBuddyPage> {
     final size = MediaQuery.of(context).size;
     final locData = Provider.of<LocationMethods>(context);
     final fbData = Provider.of<FirebaseMethods>(context, listen: false);
-    //final currentUser = fbData.getCurrentUser();
+
     return Scaffold(
-        //drawer: AppDrawer(),
-        //appBar: header('Search Buddy', context),
         body: !_isLoading
             ? buildSearchScreen(size, locData)
-            : buildNearBuddy(fbData)
-        // body: TextButton(
-        //   child: Text('Signout'),
-        //   onPressed: fbData.signOut,
-        // ),
-        );
+            : buildNearBuddy(fbData));
   }
 
   // @override
-  // // TODO: implement wantKeepAlive
+  //
   // bool get wantKeepAlive => true;
 }

@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+//import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+//import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:studypartner/models/profile.dart';
 
 import 'package:studypartner/providers/firebaseMethods.dart';
+import 'package:studypartner/widgets/interstitialAd.dart';
 import 'package:studypartner/widgets/requestdetails.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -15,7 +17,12 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  //Future<void>
+  @override
+  void initState() {
+    super.initState();
+
+    interstialAd();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +30,6 @@ class _ProfilePageState extends State<ProfilePage> {
     DocumentSnapshot currentuserData = data.userData;
     DocumentSnapshot buddyuserData = data.buddyData;
     String checkdata = data.check;
-
-    print(currentuserData.data().toString());
     final fbMethods = Provider.of<FirebaseMethods>(context, listen: false);
 
     return Scaffold(

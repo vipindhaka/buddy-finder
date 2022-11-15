@@ -9,18 +9,21 @@ class AppUser {
   List<dynamic> interests;
   DateTime time;
   Map position;
+  String token;
 
-  AppUser(
-      {this.uid,
-      this.name,
-      this.email,
-      //this.username,
-      // this.status,
-      // this.state,
-      this.profilePhoto,
-      this.interests,
-      this.time,
-      this.position});
+  AppUser({
+    this.uid,
+    this.name,
+    this.email,
+    //this.username,
+    // this.status,
+    // this.state,
+    this.profilePhoto,
+    this.interests,
+    this.time,
+    this.position,
+    this.token,
+  });
 
   Map toMap(AppUser user) {
     var data = Map<String, dynamic>();
@@ -34,6 +37,7 @@ class AppUser {
     data['interests'] = user.interests;
     data['timestamp'] = user.time;
     data['position'] = {};
+    data['token'] = user.token;
     return data;
   }
 
@@ -48,5 +52,6 @@ class AppUser {
     this.interests = mapData['interests'];
     this.time = mapData['timestamp'].toDate();
     this.position = mapData['position'];
+    this.token = mapData['token'];
   }
 }

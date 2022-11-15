@@ -23,15 +23,26 @@ class _AuthPageState extends State<AuthPage> {
               end: Alignment.bottomRight,
               colors: [
                 Theme.of(context).primaryColor,
-                Theme.of(context).accentColor
+                Colors.white,
               ]),
         ),
         child: Stack(
           children: [
             Positioned(
+              top: size.height * .7,
+              left: size.width * .34,
+              child: Row(
+                children: [
+                  Divider(),
+                  Text('Sign in using',
+                      style: TextStyle(fontSize: 22, color: Colors.blueAccent)),
+                ],
+              ),
+            ),
+            Positioned(
                 //height: 100,
                 top: size.height * .8,
-                left: _isLoading == false ? 10 : size.width * .5,
+                left: _isLoading == false ? size.width * .26 : size.width * .45,
                 // bottom: 25,
                 child: _isLoading == false
                     ? GestureDetector(
@@ -49,16 +60,17 @@ class _AuthPageState extends State<AuthPage> {
                           }
                         },
                         child: Container(
-                          height: 100,
-                          width: size.width * .9,
-                          margin: EdgeInsets.all(10),
+                          height: 40,
+                          width: size.width * .8,
+                          //margin: EdgeInsets.all(10),
+                          //padding: EdgeInsets.all(20),
                           //width: double.infinity,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             image: DecorationImage(
+                              alignment: Alignment.center,
                               fit: BoxFit.cover,
-                              image: AssetImage(
-                                  'assets/images/google_signin_button.png'),
+                              image: AssetImage('assets/images/signin.png'),
                             ),
                           ),
                           //child: Text('welcome'),

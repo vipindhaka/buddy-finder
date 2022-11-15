@@ -42,7 +42,7 @@ class _FriendsPageState extends State<FriendsPage> {
           if (!snapshot.hasData) {
             return Text('oh boy you are lonely');
           }
-          print(snapshot.data.docs.length);
+          // print(snapshot.data.docs.length);
           final data = snapshot.data.docs;
           //return Text('');
           return ListView.builder(

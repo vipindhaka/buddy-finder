@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+//import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 
 import 'package:studypartner/pages/addInterests.dart';
@@ -23,16 +23,10 @@ class _HomePageState extends State<HomePage> {
     final fbMethods = Provider.of<FirebaseMethods>(context, listen: false);
     final newUser =
         await fbMethods.authenticateUser(fbMethods.getCurrentUser(), context);
-    _initGoogleMobileAds();
     if (!newUser) {
       userData = await fbMethods.getUserData(fbMethods.getCurrentUser().uid);
     }
     return newUser;
-  }
-
-  Future<InitializationStatus> _initGoogleMobileAds() {
-    // TODO: Initialize Google Mobile Ads SDK
-    return MobileAds.instance.initialize();
   }
 
   @override

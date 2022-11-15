@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:studypartner/models/collabPost.dart';
 import 'package:studypartner/models/customException.dart';
 
 import 'package:studypartner/models/user.dart';
@@ -143,8 +144,8 @@ class FirebaseMethods with ChangeNotifier {
     }
   }
 
-  Future<void> addDataToDb(
-      User currentUser, List<String> interests, File image) async {
+  Future<void> addDataToDb(User currentUser, List<String> interests, File image,
+      String token) async {
     final uploadTask =
         FirebaseStorage.instance.ref().child('${currentUser.uid}.jpg');
     await uploadTask.putFile(image);
@@ -157,7 +158,8 @@ class FirebaseMethods with ChangeNotifier {
         name: currentUser.displayName,
         //username: username,
         interests: interests,
-        time: DateTime.now());
+        time: DateTime.now(),
+        token: token);
 
     await FirebaseFirestore.instance
         .collection('users')
@@ -255,11 +257,7 @@ class FirebaseMethods with ChangeNotifier {
         .limit(1)
         .get();
 
-    //String url = await getDownloadUrl(user.u);
     return latestRequest;
-    // String url =
-
-    //.child('${latestRequest.docs[0]['requestSender']}.jpg');
   }
 
   Future<QuerySnapshot> getrequests(String uid) async {
@@ -272,17 +270,15 @@ class FirebaseMethods with ChangeNotifier {
       // print(list.docs[0].id);
       return list;
     } on PlatformException catch (e) {
-      // showErrorException(context, CustomException(e.code));
       throw e;
     } catch (e) {
-      // showErrorException(context, CustomException('Unable to fetch requests'));
       throw e;
     }
   }
 
   void removeBuddies(
       List<DocumentSnapshot> buddies, DocumentSnapshot currentuserdata) {
-    bool check = false;
+    //bool check = false;
     Map<String, bool> interests = {};
     final List<dynamic> currentUserinterests = currentuserdata['interests'];
     for (var v = 0; v < currentUserinterests.length; v++) {
@@ -315,9 +311,9 @@ class FirebaseMethods with ChangeNotifier {
         .collection('myreq')
         .where('requestSender', isEqualTo: currentUseruid)
         .get();
-    //print(requestCheck.docs.length.toString());
+
     if (requestCheck.docs.isNotEmpty) check = 'Request Sent';
-    // print(requestCheck.docs.toString());
+
     if (requestCheck.docs.isEmpty) {
       recievedRequest = await FirebaseFirestore.instance
           .collection('requests')
@@ -388,5 +384,12 @@ class FirebaseMethods with ChangeNotifier {
         .doc(conversationId)
         .collection('chats')
         .add(message.toMap(message));
+  }
+
+  Future<void> postCollab(CollabPost post) async {
+    await FirebaseFirestore.instance
+        .collection('posts')
+        .doc(post.userId)
+        .set(post.toMap(post));
   }
 }

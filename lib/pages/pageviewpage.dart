@@ -1,13 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+//import 'package:google_mobile_ads/google_mobile_ads.dart';
+//import 'package:provider/provider.dart';
+//import 'package:studypartner/helper/adHelper.dart';
 import 'package:studypartner/pages/ExamPage.dart';
 import 'package:studypartner/pages/chatPage.dart';
+import 'package:studypartner/pages/requests.dart';
 
 import 'package:studypartner/pages/searchBuddyPage.dart';
-import 'package:studypartner/providers/firebaseMethods.dart';
+//import 'package:studypartner/providers/firebaseMethods.dart';
 import 'package:studypartner/widgets/appDrawer.dart';
+import 'package:studypartner/widgets/bannerad.dart';
 import 'package:studypartner/widgets/header.dart';
 
 class PageViewpage extends StatefulWidget {
@@ -21,47 +26,66 @@ class _PageViewpageState extends State<PageViewpage> {
   PageController _pageController;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _page = 0;
-  //DocumentSnapshot user;
+  // Future<void> handleNotification() async {
+  //   RemoteMessage initialMessage =
+  //       await FirebaseMessaging.instance.getInitialMessage();
+
+  //   if (initialMessage?.data['type'] == 'chat') {
+  //     setState(() {
+  //       _page = 2;
+  //     });
+  //   }
+
+  //   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+  //     if (message.data['type'] == 'chat') {
+  //       setState(() {
+  //         _page = 2;
+  //       });
+  //     }
+  //   });
+  // }
 
   @override
   void initState() {
-    //setUserData();
     super.initState();
+    //handleNotification();
     _pageController = PageController();
-    //checkUser();
   }
 
   @override
   void dispose() {
     _pageController.dispose();
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    //print(user.data().toString());
-    final data = Provider.of<FirebaseMethods>(context, listen: false);
-    final userId = data.getCurrentUser().uid;
     return Scaffold(
       key: _scaffoldKey,
       appBar: header(_page, context, widget.user, _scaffoldKey),
       drawer: AppDrawer(widget.user),
-      body: PageView(
-        //pageSnapping: false,
+      body: Column(
         children: [
-          ExamPage(),
-          //AddInterests(),
-          SearchBuddyPage(),
-          ChatPage(),
-          //ProfilePage(userId),
+          Expanded(
+            child: PageView(
+              children: [
+                ExamPage(widget.user),
+                SearchBuddyPage(),
+                ChatPage(),
+                AllRequest(),
+              ],
+              controller: _pageController,
+              onPageChanged: (int page) {
+                setState(() {
+                  _page = page;
+                });
+              },
+              physics: NeverScrollableScrollPhysics(),
+            ),
+          ),
+          ShowBannerAd(),
         ],
-        controller: _pageController,
-        onPageChanged: (int page) {
-          setState(() {
-            _page = page;
-          });
-        },
-        physics: NeverScrollableScrollPhysics(),
       ),
       bottomNavigationBar: BottomNavigationBar(
         fixedColor: Theme.of(context).accentColor,
@@ -75,7 +99,8 @@ class _PageViewpageState extends State<PageViewpage> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
           BottomNavigationBarItem(icon: Icon(Icons.message), label: 'Chats'),
-          //BottomNavigationBarItem(icon: Icon(Icons.contacts), label: 'Profile'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person_add), label: 'Requests'),
         ],
       ),
     );

@@ -14,7 +14,9 @@ header(int page, BuildContext context, DocumentSnapshot user,
           ? 'Collab Dev'
           : page == 1
               ? 'Search buddy'
-              : 'Activity',
+              : page == 2
+                  ? 'Chats'
+                  : 'Friend Requests',
       style: TextStyle(color: Theme.of(context).primaryColor),
     ),
     centerTitle: true,

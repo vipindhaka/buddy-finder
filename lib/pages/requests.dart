@@ -14,6 +14,7 @@ class AllRequest extends StatefulWidget {
 
 class _AllRequestState extends State<AllRequest> {
   DocumentSnapshot userdata;
+  //List<DocumentSnapshot> requests = [];
 
   Future<QuerySnapshot> setUpData() async {
     final data = Provider.of<FirebaseMethods>(context, listen: false);
@@ -24,19 +25,18 @@ class _AllRequestState extends State<AllRequest> {
 
   @override
   Widget build(BuildContext context) {
-    //final data = Provider.of<FirebaseMethods>(context, listen: false);
-    //final user = data.getCurrentUser();
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Requests'),
-        centerTitle: true,
-      ),
       body: FutureBuilder(
         future: setUpData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting)
             return Center(child: CircularProgressIndicator());
           final List<DocumentSnapshot> datalist = snapshot.data.docs;
+          if (datalist.length == 0) {
+            return Center(
+              child: Text('oh boy! No Requests'),
+            );
+          }
           return ListView.builder(
             itemCount: datalist.length,
             itemBuilder: (context, index) {

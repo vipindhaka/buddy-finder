@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -113,16 +114,21 @@ class _AddInterestsState extends State<AddInterests> {
                                     _pickedImageFile == null
                                 ? null
                                 : () async {
-                                    List<String> inte =
-                                        _interests.text.split(" ");
+                                    List<String> inte = _interests.text
+                                        .toLowerCase()
+                                        .split(" ");
                                     setState(() {
                                       _isLoading = true;
                                     });
                                     try {
+                                      String token = await FirebaseMessaging
+                                          .instance
+                                          .getToken();
                                       await data.addDataToDb(
                                           data.getCurrentUser(),
                                           inte,
-                                          _pickedImageFile);
+                                          _pickedImageFile,
+                                          token);
                                       Navigator.of(context)
                                           .pushReplacementNamed(
                                               HomePage.routeName);

@@ -57,6 +57,11 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final DocumentSnapshot buddyData =
         ModalRoute.of(context).settings.arguments;
@@ -77,8 +82,10 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
           ? messagesListener(buddyData['conversationID'], currentUser)
           : FutureBuilder(
               future: fbMethods.getOrCreateConversation(
-                  buddyData['myUid'], buddyData['friendUid'],
-                  (String conversationId) {
+                  currentUser,
+                  buddyData.data().containsKey('friendUid')
+                      ? buddyData['friendUid']
+                      : buddyData['uid'], (String conversationId) {
                 conversation = conversationId;
               }),
               builder: (context, snapshot) {

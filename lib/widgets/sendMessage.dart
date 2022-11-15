@@ -16,14 +16,12 @@ class _SendMessageState extends State<SendMessage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     messageController = TextEditingController();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     messageController.dispose();
   }

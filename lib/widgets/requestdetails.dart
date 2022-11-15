@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:studypartner/models/customException.dart';
+import 'package:studypartner/pages/individualchatPage.dart';
 import 'package:studypartner/providers/firebaseMethods.dart';
 import 'package:studypartner/widgets/exceptiondisplay.dart';
 
@@ -109,7 +110,7 @@ class _RequestCheckerState extends State<RequestChecker> {
                                 }
                               }
                             : null),
-            if (check == 'Friends')
+            if (check == 'Friends' && widget.checkdata != 'requests')
               TextButton.icon(
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
@@ -122,7 +123,11 @@ class _RequestCheckerState extends State<RequestChecker> {
                       ),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).pushReplacementNamed(
+                        IndividualChatScreen.routeName,
+                        arguments: widget.buddyuserData);
+                  },
                   icon: Icon(Icons.message, color: Colors.white),
                   label: Text(
                     'Message',
